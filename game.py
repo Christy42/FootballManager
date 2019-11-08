@@ -1,18 +1,15 @@
 from copy import deepcopy
 
 from procedures.tackling_procedures import *
+from stack import Stack
 
 
 class Match:
     def __init__(self, team_1_file, team_1_tacs, team_2_file, team_2_tacs):
-        team_1 = MatchPlayer.from_file(team_1_file, team_1_tacs)
-        team_2 = MatchPlayer.from_file(team_2_file, team_2_tacs)
+        team_1 = GameTeam.from_file(team_1_file, team_1_tacs)
+        team_2 = GameTeam.from_file(team_2_file, team_2_tacs)
         self.state = GameState(deepcopy(team_1), deepcopy(team_2))
         self._commentary = []
-
-    @property
-    def required_sets(self):
-        return self._required_sets
 
     def set_commentary(self, comm):
         self._commentary = comm
@@ -24,29 +21,15 @@ class Match:
         # TODO: Probably have another file for the stats
 
     def record_file_details(self):
-        print("HERE WE ARE")
-        to_print = {"report": self.state.report, "game_scores_1": self.state.player_1.state.games_won_in_match,
-                    "games_scores_2": self.state.player_2.state.games_won_in_match,
-                    "point_scores_1": self.state.player_1.state.points_won_in_match,
-                    "point_scores_2": self.state.player_2.state.points_won_in_match,
-                    "statistics player_1": self.state.player_1.statistics.to_file,
-                    "statistics player_2": self.state.player_2.statistics.to_file,
-                    "commentary": self._commentary}
-        with open(self._file_name, "w") as comm_file:
-            yaml.safe_dump(to_print, comm_file)
-        # TODO: Match scores,game by game
-        # TODO: Winner in an easy to read format
-        # TODO: Stats like aces etc.  Where are these stored to begin with
-        # TODO: The report for the commentary (Outcomes)
-        # TODO: Turn all these actions into Procedures at some stage
+        pass
 
     def step(self):
         """
         Runs the match by taking from the stack
         :return:
         """
-        EndGameProc(self)
-        PreGameProc(self)
+        # EndGameProc(self)
+        # PreGameProc(self)
 
         while True:
             # Check if the game is over
@@ -64,16 +47,12 @@ class Match:
 class GameState:
     # Keeps track of the sets, games,points played as well as the stack of actions and the balance of a given point
     def __init__(self, team_1, team_2):
-        self._set_number = 0
         self._stack = Stack()
-        self._server = None
-        self._reports = []
-        self._first_serve_point = None
-        self._game_number = 0
-        self._point_number = 0
-        self._balance = 0
-        self._player_1 = player_1
-        self._player_2 = player_2
+        self._possession = None
+        self._ball_location = 35
+        self._first_down_marker = 45
+        self._team_1 = team_1
+        self._team_2 = team_2
         self._outcome = None
 
     def set_comm_values(self, outcome=None):
