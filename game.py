@@ -1,7 +1,9 @@
 from copy import deepcopy
+import math
 
 from procedures.tackling_procedures import *
 from stack import Stack
+from enums import Possession
 
 
 class Match:
@@ -53,7 +55,11 @@ class GameState:
         self._first_down_marker = 45
         self._team_1 = team_1
         self._team_2 = team_2
+        self._time = GameTime()
+        self._down = 1
+        self._quarter = 1
         self._outcome = None
+        self._reports = []
 
     def set_comm_values(self, outcome=None):
         self._outcome = outcome
@@ -62,19 +68,29 @@ class GameState:
     def outcome(self):
         return self._outcome
 
-    def first_serve(self):
-        self._first_serve_point = Service.FIRST_SERVE
+    def iterate_down(self):
+        self._down = self._down % 4 + 1
 
-    def second_serve(self):
-        self._first_serve_point = Service.SECOND_SERVE
+    def reset_down(self):
+        self._down = 1
+        
+    @property
+    def quarter(self):
+        return self._quarter
 
     @property
-    def service(self):
-        return self._first_serve_point
+    def qtime(self):
+        return self._time.game_time
 
-    @property
-    def balance(self):
-        return self._balance
+    def increase_quarter(self):
+        # TODO: Need to do things for the quarter -> 3 and quarter 5
+        self._quarter += 1
+
+    def add_time(self, time_used):
+        self._time.increase_time(time_used)
+        if self._time.game_time[0] >= 15:
+            self.increase_quarter()
+            self._time.reset_time()
 
     @property
     def report(self):
@@ -85,41 +101,29 @@ class GameState:
         return self._reports
 
     @property
-    def set_number(self):
-        return self._set_number
-
-    @property
-    def server(self):
-        if self._server == ServerOutcome.PLAYER_1:
-            return self._player_1
-        elif self._server == ServerOutcome.PLAYER_2:
-            return self._player_2
+    def offense(self):
+        if self._possession == Possession.TEAM_1:
+            return self._team_1
+        elif self._possession == Possession.TEAM_2:
+            return self._team_2
 
     @property
     def stack_size(self):
         return self._stack.size()
 
     @property
-    def returner(self):
-        if self._server == ServerOutcome.PLAYER_1:
-            return self._player_2
-        elif self._server == ServerOutcome.PLAYER_2:
-            return self._player_1
-
-    @property
-    def player_1(self):
-        return self._player_1
-
-    @property
-    def player_2(self):
-        return self._player_2
+    def defense(self):
+        if self._possession == Possession.TEAM_1:
+            return self._team_2
+        elif self._possession == Possession.TEAM_2:
+            return self._team_1
 
     @property
     def is_empty(self):
         return self._stack.is_empty
 
-    def set_server(self, server_style):
-        self._server = server_style
+    def set_possession(self, possession):
+        self._possession = possession
 
     def pop(self):
         self._stack.pop()
@@ -131,9 +135,6 @@ class GameState:
     def peek(self):
         return self._stack.peek
 
-    def set_balance(self, value):
-        self._balance = value
-
     def push(self, step):
         self._stack.push(step)
 
@@ -141,29 +142,29 @@ class GameState:
     def items(self):
         return self._stack.items
 
-    def end_game(self):
-        self.change_server()
-        self._game_number += 1
-
-    def end_set(self):
-        self._set_number += 1
-        self._game_number = 0
-
-    def change_server(self):
-        if self._server == ServerOutcome.PLAYER_1:
-            self._server = ServerOutcome.PLAYER_2
+    def turnover(self):
+        if self._possession == Possession.TEAM_1:
+            self._possession = Possession.TEAM_2
         else:
-            self._server = ServerOutcome.PLAYER_1
+            self._possession = Possession.TEAM_1
 
     def update_previous_score(self, new_score):
         self._reports[-1].update_score(new_score)
 
 
-class PractiseMatch(Match):
-    def __init__(self, sets, player_1_file, player_2_file, file_name,
-                 player_1_tacs, player_2_tacs, final_set_tie_break=True):
-        super().__init__(sets, player_1_file, player_2_file, file_name,
-                         player_1_tacs, player_2_tacs, final_set_tie_break)
-        player_1 = PractisePlayer.from_file(player_1_file, player_1_tacs)
-        player_2 = PractisePlayer.from_file(player_2_file, player_2_tacs)
-        self.state = MatchState(deepcopy(player_1), deepcopy(player_2))
+class GameTime:
+    def __init__(self):
+        self._minutes = 0
+        self._seconds = 0
+
+    @property
+    def game_time(self):
+        return self._minutes, self._seconds
+
+    def increase_time(self, seconds):
+        self._minutes += math.floor((self._seconds + seconds) / 60)
+        self._seconds = (self._seconds + seconds) % 60
+
+    def reset_time(self):
+        self._minutes = 0
+        self._seconds = 0
