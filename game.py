@@ -19,7 +19,7 @@ class Match:
     def end_match(self):
         # TODO: Report back to the file to have a record of it.  The competition can deal with
         self.record_file_details()
-        # TODO: Report back to the player files as well for stuff like fatigue and updating stats
+        # TODO: Report back to the team files as well for stuff like fatigue and updating stats
         # TODO: Probably have another file for the stats
 
     def record_file_details(self):
@@ -73,7 +73,7 @@ class GameState:
 
     def reset_down(self):
         self._down = 1
-        
+
     @property
     def quarter(self):
         return self._quarter

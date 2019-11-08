@@ -35,8 +35,8 @@ class Outcome:
 
     def to_yaml(self):
         return {"name": self._outcome.name, "score": self._score,
-                "player": self._player.name if self._player is not None else None,
-                "player id": self._player.id if self._player is not None else None,
+                "team": self._player.name if self._player is not None else None,
+                "team id": self._player.id if self._player is not None else None,
                 "value": self._value, "secondary": self._secondary.name if self._secondary is not None else None}
 
 
