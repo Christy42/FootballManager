@@ -43,3 +43,48 @@ class Outcome:
 class Possession(Enum):
     TEAM_1 = 1
     TEAM_2 = 2
+
+
+class OffenseFormation(Enum):
+    SINGLEBACK = 1
+    SHOTGUN = 2
+    I_FORM = 3
+    DOUBLE_TE = 4
+    SPREAD = 5
+    PUNT = 6
+    KICK_OFF = 7
+    FIELD_GOAL = 8
+
+
+class DefenseFormation(Enum):
+    FOUR_THREE = 1
+    THREE_FOUR = 2
+    NICKEL = 3
+    DIME = 4
+    FOUR_FOUR = 5
+    KICK_RETURN = 6
+    PUNT_RETURN = 7
+    KICK_BLOCK = 8
+
+
+class Position(Enum):
+    QB = 1
+    RB = 2
+    WR = 3
+    TE = 4
+    C = 5
+    OT = 6
+    OG = 7
+    FB = 8
+    DT = 9
+    DE = 10
+    OLB = 11
+    MLB = 12
+    CB = 13
+    N = 14
+    S = 15
+    K = 16
+    P = 17
+    G = 18
+    KR = 19
+    PR = 20

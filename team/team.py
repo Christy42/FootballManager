@@ -1,3 +1,6 @@
+from enums import OffenseFormation, DefenseFormation, Position
+
+
 class BaseTeam:
     def __init__(self):
         pass
@@ -7,13 +10,21 @@ class MatchTeam(BaseTeam):
     def __init__(self, match_file):
         super().__init__()
         # TODO: Upload from the match file
-        self._match_roster = []
-        self._offense_roster = []
-        self._defense_roster = []
-        self._kicker = 0
-        self._punter = 0
+        self._offense_roster = {OffenseFormation.DOUBLE_TE: [], OffenseFormation.FIELD_GOAL: [],
+                                OffenseFormation.I_FORM: [], OffenseFormation.KICK_OFF: [], OffenseFormation.PUNT: [],
+                                OffenseFormation.SHOTGUN: [], OffenseFormation.SINGLEBACK: [],
+                                OffenseFormation.SPREAD: []}
+        self._defense_roster = {DefenseFormation.DIME: [], DefenseFormation.FOUR_FOUR: [],
+                                DefenseFormation.FOUR_THREE: [], DefenseFormation.KICK_BLOCK: [],
+                                DefenseFormation.KICK_RETURN: [], DefenseFormation.NICKEL: [],
+                                DefenseFormation.PUNT_RETURN: [], DefenseFormation.THREE_FOUR: []}
+        self._position_rotation = {Position.QB: {}, Position.RB: {}, Position.C: {}, Position.CB: {}, Position.DE: {},
+                                   Position.DT: {}, Position.FB: {}, Position.G: {}, Position.K: {}, Position.KR: {},
+                                   Position.MLB: {}, Position.N: {}, Position.OG: {}, Position.OLB: {}, Position.OT: {},
+                                   Position.P: {}, Position.PR: {}, Position.S: {}, Position.TE: {}, Position.WR: {}}
         self._state = TeamState()
-        # TODO: Something to do with tactics
+        self._tactics = []
+        # TODO: Something to do with tactics, how does the decision making process
 
 
 class TeamState:
