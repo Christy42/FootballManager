@@ -1,3 +1,5 @@
+import yaml
+
 
 class PlayerBase:
     def __init__(self, name, id_no):
