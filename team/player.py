@@ -1,5 +1,7 @@
 import yaml
 
+from enums import Attribute
+
 
 class PlayerBase:
     def __init__(self, name, id_no):
@@ -23,16 +25,14 @@ class PlayerBase:
 
 
 class MatchPlayer(PlayerBase):
-    def __init__(self, speed, tackling, awareness, vision, positioning, elusiveness, carrying,
-                 fitness, weight, blocking, passing, catching, name, id_no):
+    def __init__(self, passing, tackling, elusiveness, strength, speed, catching, jumping, vision, fitness, weight,
+                 height, stamina, age, strength_optimal, mobility_optimal, fitness_optimal, positioning, blocking,
+                 carrying, name, id_no):
         super().__init__(name, id_no)
-        self.attributes = MatchAttributes(accuracy, shot_selection, serve, strength, mobility,
-                                          fitness, stamina, age, strength_optimal, mobility_optimal, fitness_optimal)
+        self.attributes = MatchAttributes(passing, tackling, elusiveness, strength, speed, catching, jumping, vision,
+                                          fitness, weight, height, stamina, age, strength_optimal, mobility_optimal,
+                                          fitness_optimal, positioning, blocking, carrying)
         self.statistics = PlayerStatistics(name)
-        self._serve_aggression = serve_aggression
-        self._aggression = aggression
-        self._second_serve_aggression = second_serve_aggression
-        self._tactic = tactic
         self.state = PlayerState()
 
     @classmethod
@@ -41,23 +41,12 @@ class MatchPlayer(PlayerBase):
             stats = yaml.safe_load(file)
         with open(match_file, "r") as file:
             tactics = yaml.safe_load(file)
-        return cls(stats["age"], stats["serve"], stats["shot_selection"], stats["serve"], stats["strength_basis"],
+        return cls(stats[Attribute.AGE], stats[Attribute.AGE_OPTIMAL], stats[Attribute.BLOCKING],
+                   stats[Attribute.CARRYING], stats["strength_basis"],
                    stats["strength_optimal_age"], stats["mobility_basis"], stats["mobility_optimal_age"],
                    stats["fitness_basis"], stats["fitness_optimal_age"], stats["stamina"], tactics["serve_aggression"],
                    tactics["second_serve_aggression"], tactics["aggression"], tactics["tactic"], stats["name"],
                    stats["id"])
-
-    @property
-    def serve_aggression(self):
-        return self._serve_aggression
-
-    @property
-    def second_serve_aggression(self):
-        return self._second_serve_aggression
-
-    @property
-    def aggression(self):
-        return self._aggression
 
     @property
     def tactic(self):
@@ -86,48 +75,3 @@ class PlayerState:
         self._points_won = 0
         self._points_won_old_games = []
         self._games_won_old_sets = [0]
-
-    @property
-    def sets(self):
-        return self._sets_won
-
-    @property
-    def points(self):
-        return self._points_won
-
-    @property
-    def games(self):
-        return self._games_won
-
-    @property
-    def points_won_in_match(self):
-        return self._points_won_old_games
-
-    @property
-    def games_won_in_match(self):
-        return self._games_won_old_sets
-
-    def won_point(self):
-        self._points_won += 1
-
-    def won_game(self):
-        self._points_won_old_games.append(self._points_won)
-        self._games_won += 1
-        self._games_won_old_sets[-1] = self._games_won
-        self._points_won = 0
-
-    def won_set(self):
-        self._games_won_old_sets.append(0)
-        self._sets_won += 1
-        self._points_won = 0
-        self._games_won = 0
-
-    def lost_game(self):
-        self._points_won_old_games.append(self._points_won)
-        self._games_won_old_sets[-1] = self._games_won
-        self._points_won = 0
-
-    def lost_set(self):
-        self._games_won_old_sets.append(0)
-        self._games_won = 0
-        self._points_won = 0

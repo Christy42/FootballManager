@@ -63,3 +63,31 @@ class PhysicalAttribute(Attribute):
         stam_value = (stamina < 500) * 0.2 + (stamina < 300) * 0.1 + (stamina <= 0) * 0.1 + 0.2
         self._stam_factor = (100 * (1 - stam_value + stam_value * stamina / 1000))
         self._update_value()
+
+
+class StaminaAttribute(PhysicalAttribute):
+    def __init__(self, name, basis, age, optimal_age, fitness):
+        super().__init__(name, basis, age, optimal_age)
+        self._fitness = fitness
+
+    def amend_stamina(self, value):
+        self._value = self._value - value
+
+    def reset_stat(self):
+        self._value = self._fitness
+
+
+class MatchAttributes:
+    def __init__(self):
+        self._fitness = 1
+        self._stamina = 1
+        self._passing = 1
+        self._catching = 1
+        self._route_running = 1
+        self._carrying = 1
+        self._blocking = 1
+        self._vision = 1
+        self._tackling = 1
+        self._awareness = 1
+        self._coverage = 1
+        self._jumping = 1

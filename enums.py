@@ -88,3 +88,26 @@ class Position(Enum):
     G = 18
     KR = 19
     PR = 20
+
+
+class Attribute(Enum):
+    PASSING = 1
+    TACKLING = 2
+    ELUSIVENESS = 3
+    STRENGTH = 4
+    SPEED = 5
+    CATCHING = 6
+    JUMPING = 7
+    VISION = 8
+    FITNESS = 9
+    WEIGHT = 10
+    HEIGHT = 11
+    STAMINA = 12
+    AGE = 13
+    STRENGTH_OPTIMAL = 14
+    MOBILITY_OPTIMAL = 15
+    AGE_OPTIMAL = 16
+    FITNESS_OPTIMAL = 17
+    POSITIONING = 18
+    BLOCKING = 19
+    CARRYING = 20
