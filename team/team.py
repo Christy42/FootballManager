@@ -10,6 +10,8 @@ class MatchTeam(BaseTeam):
     def __init__(self, match_file):
         super().__init__()
         # TODO: Upload from the match file
+        self._timing = 35
+
         self._offense_roster = {OffenseFormation.DOUBLE_TE: [], OffenseFormation.FIELD_GOAL: [],
                                 OffenseFormation.I_FORM: [], OffenseFormation.KICK_OFF: [], OffenseFormation.PUNT: [],
                                 OffenseFormation.SHOTGUN: [], OffenseFormation.SINGLEBACK: [],
@@ -18,6 +20,7 @@ class MatchTeam(BaseTeam):
                                 DefenseFormation.FOUR_THREE: [], DefenseFormation.KICK_BLOCK: [],
                                 DefenseFormation.KICK_RETURN: [], DefenseFormation.NICKEL: [],
                                 DefenseFormation.PUNT_RETURN: [], DefenseFormation.THREE_FOUR: []}
+        # Format {player: %} how does this interact with the roster???
         self._position_rotation = {Position.QB: {}, Position.RB: {}, Position.C: {}, Position.CB: {}, Position.DE: {},
                                    Position.DT: {}, Position.FB: {}, Position.G: {}, Position.K: {}, Position.KR: {},
                                    Position.MLB: {}, Position.N: {}, Position.OG: {}, Position.OLB: {}, Position.OT: {},

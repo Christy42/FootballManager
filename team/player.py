@@ -26,12 +26,12 @@ class PlayerBase:
 
 class MatchPlayer(PlayerBase):
     def __init__(self, passing, tackling, elusiveness, strength, speed, catching, jumping, vision, fitness, weight,
-                 height, stamina, age, strength_optimal, mobility_optimal, fitness_optimal, positioning, blocking,
+                 height, stamina, age, optimal_age, positioning, blocking,
                  carrying, name, id_no):
         super().__init__(name, id_no)
         self.attributes = MatchAttributes(passing, tackling, elusiveness, strength, speed, catching, jumping, vision,
-                                          fitness, weight, height, stamina, age, strength_optimal, mobility_optimal,
-                                          fitness_optimal, positioning, blocking, carrying)
+                                          fitness, weight, height, stamina, age, optimal_age, positioning, blocking,
+                                          carrying)
         self.statistics = PlayerStatistics(name)
         self.state = PlayerState()
 
