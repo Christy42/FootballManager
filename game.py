@@ -65,6 +65,10 @@ class GameState:
         self._quarter = 1
         self._outcome = None
         self._reports = []
+        self._cur_off_play = None
+        self._cur_def_play = None
+        self._cur_off_players = []
+        self._cur_Def_players = []
 
     def set_comm_values(self, outcome=None):
         self._outcome = outcome
