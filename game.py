@@ -1,15 +1,15 @@
 from copy import deepcopy
 import math
 
-from procedures.tackling_procedures import *
 from stack import Stack
 from enums import Possession
+from team.team import MatchTeam
 
 
 class Match:
     def __init__(self, team_1_file, team_1_tacs, team_2_file, team_2_tacs):
-        team_1 = GameTeam.from_file(team_1_file, team_1_tacs)
-        team_2 = GameTeam.from_file(team_2_file, team_2_tacs)
+        team_1 = MatchTeam.from_file(team_1_file, team_1_tacs)
+        team_2 = MatchTeam.from_file(team_2_file, team_2_tacs)
         self.state = GameState(deepcopy(team_1), deepcopy(team_2))
         self._commentary = []
 
@@ -36,18 +36,20 @@ class Match:
         while True:
             # Check if the game is over
             if self.state.is_empty:
-                return {self.state.player_1.id: self.state.player_1.state.games_won_in_match,
-                        self.state.player_2.id: self.state.player_2.state.games_won_in_match}
+                return {self.state.team_1.id: self.state.team_1.state.score,
+                        self.state.team_2.id: self.state.team_2.state.score}
 
             # Check the next item on the stack and run it.
             proc = self.state.peek
             # Do action
             self.state.pop()
+            # TODO: Each action should affect the game clock and the ball location
+            # TODO: Do we need something checking the game clock for end of game / half etc.?
             proc.step()
 
 
 class GameState:
-    # Keeps track of the sets, games,points played as well as the stack of actions and the balance of a given point
+    # Keeps track of the sets, games, points played as well as the stack of actions and the balance of a given point
     def __init__(self, team_1, team_2):
         self._stack = Stack()
         self._possession = None
@@ -56,7 +58,10 @@ class GameState:
         self._team_1 = team_1
         self._team_2 = team_2
         self._time = GameTime()
+        self._offense_formation = ""
+        self._defense_formation = ""
         self._down = 1
+        self._temp_yards = 0
         self._quarter = 1
         self._outcome = None
         self._reports = []
@@ -65,8 +70,20 @@ class GameState:
         self._outcome = outcome
 
     @property
+    def temp_yards(self):
+        return self._temp_yards
+
+    @property
     def outcome(self):
         return self._outcome
+
+    @property
+    def offense_formation(self):
+        return self._offense_formation
+
+    @property
+    def defense_formation(self):
+        return self._defense_formation
 
     def iterate_down(self):
         self._down = self._down % 4 + 1
@@ -77,6 +94,14 @@ class GameState:
     @property
     def quarter(self):
         return self._quarter
+
+    @property
+    def team_1(self):
+        return self._team_1
+
+    @property
+    def team_2(self):
+        return self._team_2
 
     @property
     def qtime(self):
