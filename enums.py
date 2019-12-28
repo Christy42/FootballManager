@@ -90,6 +90,17 @@ class Position(Enum):
     PR = 20
 
 
+class Side(Enum):
+    LEFT = 1
+    RIGHT = 2
+    CENTER = 3
+
+
+class RunStyle(Enum):
+    ZONE = 1
+    MAN = 2
+
+
 class Attribute(Enum):
     PASSING = 1
     TACKLING = 2
