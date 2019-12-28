@@ -5,9 +5,14 @@ class BaseTeam:
     def __init__(self):
         pass
 
+    # TODO: This should be that class creation method
+    @classmethod
+    def from_file(cls, file, tactics):
+        pass
+
 
 class MatchTeam(BaseTeam):
-    def __init__(self, match_file):
+    def __init__(self):
         super().__init__()
         # TODO: Upload from the match file
         self._timing = 35
@@ -20,7 +25,7 @@ class MatchTeam(BaseTeam):
                                 DefenseFormation.FOUR_THREE: [], DefenseFormation.KICK_BLOCK: [],
                                 DefenseFormation.KICK_RETURN: [], DefenseFormation.NICKEL: [],
                                 DefenseFormation.PUNT_RETURN: [], DefenseFormation.THREE_FOUR: []}
-        # Format {player: %} how does this interact with the roster???
+        # Format {player: %} how does this interact with the roster???  Seems to be two issues at play
         self._position_rotation = {Position.QB: {}, Position.RB: {}, Position.C: {}, Position.CB: {}, Position.DE: {},
                                    Position.DT: {}, Position.FB: {}, Position.G: {}, Position.K: {}, Position.KR: {},
                                    Position.MLB: {}, Position.N: {}, Position.OG: {}, Position.OLB: {}, Position.OT: {},
