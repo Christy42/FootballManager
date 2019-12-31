@@ -61,6 +61,7 @@ class GameState:
         self._offense_formation = ""
         self._defense_formation = ""
         self._down = 1
+        self._turnover = 0
         self._temp_yards = 0
         self._quarter = 1
         self._outcome = None
@@ -76,6 +77,46 @@ class GameState:
     @property
     def temp_yards(self):
         return self._temp_yards
+
+    def add_temp_yards(self, tmp):
+        self._temp_yards += tmp
+
+    def flush_temp_yards(self):
+        self._ball_location += self._temp_yards
+        if self._ball_location >= self._first_down_marker:
+            self._first_down_marker = min(100, self._ball_location + 10)
+            self.reset_down()
+        else:
+            self.iterate_down()
+        self._temp_yards = 0
+
+    def end_play_checks(self):
+        self._touchback_check()
+        self._turnover_check()
+        self._safety_check()
+        self._td_check()
+
+    def _turnover_check(self):
+        if self._turnover == 1:
+            self._turnover = 0
+            self.reset_down()
+            self._ball_location = 100 - self._ball_location
+            # TODO: Turn over possession
+
+    def _td_check(self):
+        if self._ball_location > 100:
+            if self._possession == 0:
+                self.team_1.add_points(6)
+            # TODO: Need to restart here, Need the extra point attempt here as well
+            return True
+
+    def _safety_check(self):
+        if self._turnover == 0 and self._ball_location < 0:
+            return True
+
+    def _touchback_check(self):
+        if self._turnover == 1 and self._ball_location > 100:
+            return True
 
     @property
     def outcome(self):
