@@ -122,6 +122,8 @@ class Attribute(Enum):
     POSITIONING = 18
     BLOCKING = 19
     CARRYING = 20
+    ROUTE_RUNNING = 21
+    RUSHING = 22
 
 
 class OffensiveAssignments(Enum):
