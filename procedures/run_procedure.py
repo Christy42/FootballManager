@@ -11,7 +11,8 @@ class Run(Procedure):
         self._blockers = []
 
     def step(self):
-        pass
+        Tackling(self.match)
+        YBCRun(self.match)
 
     def ybc(self):
         pass
@@ -64,9 +65,8 @@ class ManBlockRun(Run):
 # TODO: I mean, returns a number but doesn't do very much???
 # Could I have a YBC stat?  But that doesn't really affect the
 class YBCRun(Procedure):
-    def __init__(self, match, side):
+    def __init__(self, match):
         super().__init__(match)
-        self._side = side
         self._left_block = 0
         self._center_block = 0
         self._right_block = 0
@@ -75,17 +75,19 @@ class YBCRun(Procedure):
         self._right_rush = 0
 
     def step(self):
-        pass
+        self.blocking()
+        self.rush()
+        # how do we figure the yards??
 
     def block_addition(self, player):
         if self.match.state.cur_off_play.block_style == RunStyle.ZONE:
-            return 0
+            return (player.strength + 1.5 * player.blocking + 0.2 * player.elusiveness + 0.1 * player.speed) / 2.8
         elif self.match.state.cur_off_play.block_style == RunStyle.MAN:
-            return 0
+            return (player.strength * 1.5 + player.blocking + 0.05 * player.elusiveness) / 2.55
 
     @staticmethod
     def rush_addition(player):
-        return 0
+        return (player.strength + 0.9 * player.rush + 0.1 * player.elusiveness + 0.2 * player.speed) / 2.2
 
     def blocking(self):
         # TODO: Who is actually involved in each position on this play?
@@ -111,27 +113,32 @@ class YBCRun(Procedure):
                 self._center_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i])
 
     def form_adjustment(self, i):
-        pass
+        if self.match.state.defense_formation.dl > i:
+            return 1
+        elif self.match.state.defense_formation.dl + self.match.state.defense_formation.lb > i:
+            return 0.9
+        else:
+            return 0.7
 
     def rush(self):
         # TODO: Who is actually involved in each position on this play?
         # Left blocking
         for i in range(self.match.state.cur_off_play.assignments):
             if self.match.state.cur_def_play.assignments[i] == DefensiveAssignments.LEFT_RUSH:
-                self._left_rush += 0.9 * self.rush_addition(self.match.state.cur_def_players[i])
+                self._left_rush += 0.9 * self.rush_addition(self.match.state.cur_def_players[i]) * self.form_adjustment(i)
             elif self.match.state.cur_def_play.assignments[i] == DefensiveAssignments.CENTER_RUSH:
-                self._left_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i])
+                self._left_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i]) * self.form_adjustment(i)
         # Right blocking
         for i in range(self.match.state.cur_off_play.assignments):
             if self.match.state.cur_def_play.assignments[i] == DefensiveAssignments.RIGHT_RUSH:
-                self._right_rush += 0.9 * self.rush_addition(self.match.state.cur_def_players[i])
+                self._right_rush += 0.9 * self.rush_addition(self.match.state.cur_def_players[i]) * self.form_adjustment(i)
             elif self.match.state.cur_def_play.assignments[i] == DefensiveAssignments.CENTER_RUSH:
-                self._right_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i])
+                self._right_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i]) * self.form_adjustment(i)
         # Center blocking
         for i in range(self.match.state.cur_off_play.assignments):
             if self.match.state.cur_def_play.assignments[i] == DefensiveAssignments.CENTER_RUSH:
-                self._center_rush += 0.8 * self.rush_addition(self.match.state.cur_def_players[i])
+                self._center_rush += 0.8 * self.rush_addition(self.match.state.cur_def_players[i]) * self.form_adjustment(i)
             elif self.match.state.cur_def_play.assignments[i] == DefensiveAssignments.RIGHT_RUSH:
-                self._center_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i])
+                self._center_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i]) * self.form_adjustment(i)
             elif self.match.state.cur_def_play.assignments[i] == DefensiveAssignments.LEFT_RUSH:
-                self._center_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i])
+                self._center_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i]) * self.form_adjustment(i)
