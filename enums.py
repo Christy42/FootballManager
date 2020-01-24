@@ -90,6 +90,12 @@ class Position(Enum):
     PR = 20
 
 
+class PlayStyle(Enum):
+    RUN = 1
+    PASS = 2
+    SPECIAL = 3
+
+
 class Side(Enum):
     LEFT = 1
     RIGHT = 2

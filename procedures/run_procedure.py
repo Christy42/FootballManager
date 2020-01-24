@@ -11,7 +11,9 @@ class Run(Procedure):
         self._blockers = []
 
     def step(self):
-        Tackling(self.match)
+        # TODO: How to figure tackler
+        Tackling(self.match, self.match.state.cur_off_players[self.match.state.cur_off_play.runner],
+                 self.match.state.cur_def_players[self.get_tackler()])
         YBCRun(self.match)
 
     def ybc(self):
@@ -20,46 +22,14 @@ class Run(Procedure):
     def broken_tackle(self):
         pass
 
-
-# TODO: More exp, agility based.  Bigger gains, bigger losses.
-# TODO: So who is involved.  Full Back (maybe) and 5 linemen vs  DL and blitzers...
-class ZoneBlockRun(Run):
-    def __init__(self, match, side):
-        super().__init__(match, side)
-
-    def step(self):
-        if self.match.state.offense_formation in []:
-            self._blockers = []
-        else:
-            self._blockers = []
-        block_power = self.blocking()
-        def_power = self.rush()
-
-    def blocking(self):
-        if self._side == Side.LEFT:
-            return 1
-        elif self._side == Side.CENTER:
-            return 2
-        else:
-            return 3
-
-    def rush(self):
-        if self._side == Side.LEFT:
-            return 1
-        elif self._side == Side.CENTER:
-            return 2
-        else:
-            return 3
-
-
-# TODO: Less exp based.  Smaller gains, smaller losses.
-class ManBlockRun(Run):
-    def __init__(self, match, side):
-        super().__init__(match, side)
-        pass
-
-    def step(self):
-        pass
+    def get_tackler(self):
+        if self.match.state.cur_off_play.style == PlayStyle.RUN:
+            if self.match.state.cur_off_play.direction == Side.LEFT:
+                return choice([1, 2, 5, 6])
+            elif self.match.state.cur_off_play.direction == Side.CENTER:
+                return choice([2, 3, 6, 7])
+            elif self.match.state.cur_off_play.direction == Side.RIGHT:
+                return choice([3, 4, 7, 8])
 
 
 # TODO: I mean, returns a number but doesn't do very much???
@@ -77,6 +47,12 @@ class YBCRun(Procedure):
     def step(self):
         self.blocking()
         self.rush()
+        if self.match.state.cur_off_play.side == Side.LEFT:
+            self.match.state.add_temp_yards((self._left_block - self._left_rush) / 100)
+        elif self.match.state.cur_off_play.side == Side.CENTER:
+            self.match.state.add_temp_yards((self._center_block - self._center_rush) / 100)
+        elif self.match.state.cur_off_play.side == Side.RIGHT:
+            self.match.state.add_temp_yards((self._right_block - self._right_rush) / 100)
         # how do we figure the yards??
 
     def block_addition(self, player):

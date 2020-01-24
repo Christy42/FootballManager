@@ -40,6 +40,6 @@ class EndPlay(Procedure):
 
     def step(self):
         # TODO: Need to turn temp yards into real yards, recalculate down and distance.  Deal with TD/ Safety
-        self.match.state.flush_temp_yards()
+        self.match.state.end_play_checks()
 
 
