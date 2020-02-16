@@ -1,16 +1,19 @@
 from copy import deepcopy
 import math
+import yaml
 from random import randint, choices
 
 from stack import Stack
 from enums import Possession, PlayStyle, Position
 from team.team import MatchTeam
+from procedures.clock_procedure import CoinFlip
 
 
 class Match:
-    def __init__(self, team_1_file, team_1_tacs, team_2_file, team_2_tacs):
-        team_1 = MatchTeam.from_file(team_1_file, team_1_tacs)
-        team_2 = MatchTeam.from_file(team_2_file, team_2_tacs)
+    def __init__(self, team_1_file, team_1_tactics, team_2_file, team_2_tactics):
+        team_1 = MatchTeam.from_file(team_1_file, team_1_tactics)
+        team_2 = MatchTeam.from_file(team_2_file, team_2_tactics)
+
         self.state = GameState(deepcopy(team_1), deepcopy(team_2))
         self._commentary = []
 
@@ -33,12 +36,13 @@ class Match:
         """
         # EndGameProc(self)
         # PreGameProc(self)
+        CoinFlip(self)
 
         while True:
             # Check if the game is over
             if self.state.is_empty:
-                return {self.state.team_1.id: self.state.team_1.state.score,
-                        self.state.team_2.id: self.state.team_2.state.score}
+                return {self.state.team_1.id_no: self.state.team_1.state.score,
+                        self.state.team_2.id_no: self.state.team_2.state.score}
 
             # Check the next item on the stack and run it.
             proc = self.state.peek
@@ -218,26 +222,16 @@ class GameState:
         return self._reports
 
     @property
-    def offense(self):
-        if self._possession == Possession.TEAM_1:
-            return self._team_1
-        elif self._possession == Possession.TEAM_2:
-            return self._team_2
-
-    @property
     def stack_size(self):
         return self._stack.size()
 
     @property
-    def defense(self):
-        if self._possession == Possession.TEAM_1:
-            return self._team_2
-        elif self._possession == Possession.TEAM_2:
-            return self._team_1
-
-    @property
     def is_empty(self):
         return self._stack.is_empty
+
+    @property
+    def possession(self):
+        return self._possession
 
     def set_possession(self, possession):
         self._possession = possession
@@ -298,3 +292,8 @@ class GameTime:
     def reset_time(self):
         self._minutes = 0
         self._seconds = 0
+
+
+b = Match("sample//team1.yaml", "sample//team1tactics.yaml", "sample//team2.yaml", "sample//team2tactics.yaml")
+b.step()
+print(b.state.possession)
