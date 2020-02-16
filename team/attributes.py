@@ -9,8 +9,9 @@ class Attribute:
         self._basis = basis_value
         self._cur_basis = basis_value
         self._age = age
-        self._value = self._calc_value()
         self._optimal_age = optimal_age
+        self._value = self._calc_value()
+
         self._name = name
         self._stam_factor = 1
         self._add_factor = 0
@@ -103,3 +104,59 @@ class MatchAttributes:
         self._strength = PhysicalAttribute("strength", strength, age, optimal_age)
         self._speed = PhysicalAttribute("speed", speed, age, optimal_age)
         self._elusiveness = PhysicalAttribute("elusiveness", elusiveness, age, optimal_age)
+
+    @property
+    def stamina(self):
+        return self._stamina.value
+
+    @property
+    def passing(self):
+        return self._passing.value
+
+    @property
+    def catching(self):
+        return self._catching.value
+
+    @property
+    def route_running(self):
+        return self._route_running.value
+
+    @property
+    def carrying(self):
+        return self._carrying.value
+
+    @property
+    def blocking(self):
+        return self._blocking.value
+
+    @property
+    def vision(self):
+        return self._vision.value
+
+    @property
+    def tackling(self):
+        return self._tackling.value
+
+    @property
+    def awareness(self):
+        return self._awareness.value
+
+    @property
+    def coverage(self):
+        return self._coverage.value
+
+    @property
+    def jumping(self):
+        return self._jumping.value
+
+    @property
+    def strength(self):
+        return self._strength.value
+
+    @property
+    def speed(self):
+        return self._speed.value
+
+    @property
+    def elusiveness(self):
+        return self._elusiveness.value

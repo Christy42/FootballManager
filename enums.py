@@ -81,13 +81,15 @@ class Position(Enum):
     OLB = 11
     MLB = 12
     CB = 13
-    N = 14
-    S = 15
+    NICKEL = 14
+    SF = 15
     K = 16
     P = 17
-    G = 18
+    GNR = 18
     KR = 19
     PR = 20
+    SLOT = 21
+    DIME = 22
 
 
 class PlayStyle(Enum):

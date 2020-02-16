@@ -1,6 +1,9 @@
 import yaml
+from random import randint
 
 from enums import Attribute
+from attributes import MatchAttributes
+# from team.attributes import MatchAttributes
 
 
 class PlayerBase:
@@ -9,7 +12,7 @@ class PlayerBase:
         self._id = id_no
 
     @classmethod
-    def from_file(cls, file_name, second_file):
+    def from_file(cls, file_name):
         """
         This should be overwritten.  There is no base method for this function
         """
@@ -26,31 +29,22 @@ class PlayerBase:
 
 class MatchPlayer(PlayerBase):
     def __init__(self, passing, tackling, elusiveness, strength, speed, catching, jumping, vision, fitness, weight,
-                 height, stamina, age, optimal_age, positioning, blocking,
-                 carrying, name, id_no):
+                 height, age, optimal_age, coverage, blocking, awareness, route_running, carrying, name, id_no):
         super().__init__(name, id_no)
         self.attributes = MatchAttributes(passing, tackling, elusiveness, strength, speed, catching, jumping, vision,
-                                          fitness, weight, height, stamina, age, optimal_age, positioning, blocking,
-                                          carrying)
-        self.statistics = PlayerStatistics(name)
+                                          fitness, weight, height, age, optimal_age, coverage, blocking,
+                                          carrying, route_running, awareness)
+
         self.state = PlayerState()
 
     @classmethod
-    def from_file(cls, file_name, match_file):
+    def from_file(cls, file_name):
         with open(file_name, "r") as file:
             stats = yaml.safe_load(file)
-        with open(match_file, "r") as file:
-            tactics = yaml.safe_load(file)
-        return cls(stats[Attribute.AGE], stats[Attribute.AGE_OPTIMAL], stats[Attribute.BLOCKING],
-                   stats[Attribute.CARRYING], stats["strength_basis"],
-                   stats["strength_optimal_age"], stats["mobility_basis"], stats["mobility_optimal_age"],
-                   stats["fitness_basis"], stats["fitness_optimal_age"], stats["stamina"], tactics["serve_aggression"],
-                   tactics["second_serve_aggression"], tactics["aggression"], tactics["tactic"], stats["name"],
-                   stats["id"])
-
-    @property
-    def tactic(self):
-        return self._tactic
+        return cls(stats["PASSING"], stats["TACKLING"], stats["ELUSIVENESS"], stats["STRENGTH"], stats["SPEED"],
+                   stats["CATCHING"], stats["JUMPING"], stats["VISION"], stats["FITNESS"], stats["WEIGHT"],
+                   stats["HEIGHT"], stats["AGE"], stats["OPTIMAL_AGE"], stats["COVERAGE"], stats["BLOCKING"],
+                   stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["NAME"], stats["ID"])
 
 
 class PractisePlayer(MatchPlayer):
@@ -75,3 +69,8 @@ class PlayerState:
         self._points_won = 0
         self._points_won_old_games = []
         self._games_won_old_sets = [0]
+
+
+# b = MatchPlayer.from_file("..//sample//players//player.yaml")
+# print(b.attributes.passing)
+# print(b.attributes.strength)
