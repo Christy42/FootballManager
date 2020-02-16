@@ -1,0 +1,16 @@
+{
+  name: team1,
+  id: 1,
+  players: ["player11", "player12", "player13", "player14", "player15", "player16", "player17", "player18", "player19",
+            "player110", "player111", "player112", "player113", "player114", "player115", "player116", "player117",
+            "player118", "player119", "player120", "player121", "player122", "player123", "player124", "player125",
+            "player126", "player127", "player128", "player129", "player130", "player131", "player132", "player133"],
+  rota: {QB: {player11: 100}, WR: {player12: 80, player14: 60}, RB: {player13: 100}, OT: {player15: 100, player16: 100},
+         OG: {player17: 100, player18: 100}, C: {player19: 100}, DE: {player111: 100, player110: 100},
+         DT: {player112: 100, player113: 100}, OLB: {player114: 100, player115: 100},
+         MLB: {player116: 100, player117: 100}, CB: {player118: 100, player119: 100},
+         SF: {player120: 100, player121: 100},
+         DIME: {player122: 100}, NICKEL: {player123: 100}, K: {player124: 100}, P: {player125: 100},
+         KR: {player126: 100}, PR: {player127: 100}, GNR: {player128: 100, player129: 100},
+         SLOT: {player130: 100}, FB: {player131: 100}, TE: {player132: 100, player133: 100}}
+}
