@@ -49,11 +49,11 @@ class ChoosePlay(Procedure):
 
     def step(self):
         if self.match.state.possession == 0:
-            self.match.state.team1.choose_play_offense()
-            self.match.state.team2.choose_play_defense()
+            self.match.state.cur_off_play = self.match.state.team_1.choose_play_offense()
+            self.match.state.team_2.choose_play_defense()
         else:
-            self.match.state.team2.choose_play_offense()
-            self.match.state.team1.choose_play_defense()
+            self.match.state.team_2.choose_play_offense()
+            self.match.state.team_1.choose_play_defense()
 
 
 class CoinFlip(Procedure):

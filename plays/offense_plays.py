@@ -1,8 +1,10 @@
-from enums import OffenseFormation
+from enums import OffenseFormation, PlayStyle, Direction, OffensiveAssignments, RunStyle
+from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM
 
 
 # Ordering (changes slightly depending on formation, RB, TEs go in for later WRs
-# OT, OG, C, OG, OT, WR1, WR2, WR3, WR4, QB
+# OT, OG, C, OG, OT, WR1, WR2, WR3, WR4, RB1, QB
+# OT, OG, C, OG, OT, WR1, WR2, WR3, RB1, TE1, QB
 class OffensePlay:
     def __init__(self, formation, style, assignments, direction, runner, primary, name, com_name, block_style):
         self._assignments = assignments
@@ -23,3 +25,14 @@ class OffensePlay:
     @property
     def block_style(self):
         return self._block_style
+
+
+OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN,
+                                         [OffensiveAssignments.LEFT_BLOCK, OffensiveAssignments.CENTER_BLOCK,
+                                          OffensiveAssignments.CENTER_BLOCK, OffensiveAssignments.CENTER_BLOCK,
+                                          OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.FADE_LEFT,
+                                          OffensiveAssignments.FADE_LEFT, OffensiveAssignments.FADE_RIGHT,
+                                          OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
+                                          OffensiveAssignments.QB],
+                                         Direction.MIDDLE, 7, 7, "Man Center Run",
+                                         "Man Center Run", RunStyle.MAN)}

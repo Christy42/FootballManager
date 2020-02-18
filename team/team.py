@@ -52,12 +52,13 @@ class MatchTeam(BaseTeam):
 
     # TODO: Probably add in down/distance stuff but leave for now
     def choose_play_offense(self):
-        b = random.choices(self._tactics["offense"].keys(), weights=self._tactics["offense"].values())
+        return random.choices(list(self._tactics["offense"].keys()), weights=list(self._tactics["offense"].values()))
         print(b)
 
     def choose_play_defense(self):
-        b = random.choices(self._tactics["defense"].keys(), weights=self._tactics["defense"].values())
+        return random.choices(list(self._tactics["defense"].keys()), weights=list(self._tactics["defense"].values()))
         print(b)
+
 
 class TeamState:
     def __init__(self):

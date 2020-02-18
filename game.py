@@ -71,6 +71,8 @@ class GameState:
         self._turnover = 0
         self._temp_yards = 0
         self._quarter = 1
+        self.offense_play = None
+        self.defense_play = None
         self._outcome = None
         self._reports = []
         self._cur_off_play = None

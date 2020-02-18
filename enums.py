@@ -158,6 +158,7 @@ class OffensiveAssignments(Enum):
     FADE_LEFT = 21
     POST_LEFT = 22
     POST_RIGHT = 23
+    QB = 24
 
 
 class DefensiveAssignments(Enum):
@@ -179,3 +180,9 @@ class DefensiveAssignments(Enum):
     LONG_LEFT_COVER = 16
     LONG_CENTER_COVER = 17
     LONG_RIGHT_COVER = 18
+
+
+class Direction(Enum):
+    LEFT = 1
+    MIDDLE = 2
+    RIGHT = 3
