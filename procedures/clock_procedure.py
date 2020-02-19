@@ -1,6 +1,7 @@
 from procedures.procedure import Procedure
 import random
 
+
 class EndQuarter(Procedure):
     def __init__(self, match):
         super().__init__(match)
@@ -43,6 +44,22 @@ class EndPlay(Procedure):
         self.match.state.end_play_checks()
 
 
+class ChoosePlayers(Procedure):
+    def __init__(self, match):
+        super().__init__(match)
+
+    def step(self):
+        if self.match.state.possession == 0:
+            self.match.state.cur_off_players = \
+                self.match.state.team_1.choose_offense(self.match.state.cur_off_play.formation)
+            self.match.state.cur_def_players = self.match.state.team_2.choose_defense(self.match.state.cur_def_play.formation)
+        else:
+            self.match.state.cur_off_players = \
+                self.match.state.team_2.choose_offense(self.match.state.cur_off_play.formation)
+            self.match.state.cur_def_players = \
+                self.match.state.team_1.choose_defense(self.match.state.cur_def_play.formation)
+
+
 class ChoosePlay(Procedure):
     def __init__(self, match):
         super().__init__(match)
@@ -50,10 +67,12 @@ class ChoosePlay(Procedure):
     def step(self):
         if self.match.state.possession == 0:
             self.match.state.cur_off_play = self.match.state.team_1.choose_play_offense()
-            self.match.state.team_2.choose_play_defense()
+            self.match.state.cur_def_play = self.match.state.team_2.choose_play_defense()
         else:
-            self.match.state.team_2.choose_play_offense()
-            self.match.state.team_1.choose_play_defense()
+            self.match.state.cur_off_play = self.match.state.team_2.choose_play_offense()
+            self.match.state.cur_def_play = self.match.state.team_1.choose_play_defense()
+
+        ChoosePlayers(self.match)
 
 
 class CoinFlip(Procedure):

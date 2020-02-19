@@ -65,8 +65,6 @@ class GameState:
         self._time = GameTime()
         self._team_1_pace = 25
         self._team_2_pace = 25
-        self._offense_formation = None
-        self._defense_formation = None
         self._down = 1
         self._turnover = 0
         self._temp_yards = 0
@@ -78,8 +76,8 @@ class GameState:
         self._cur_off_play = None
         self._cur_def_play = None
         self.tackler = 0
-        self._cur_off_players = []
-        self._cur_def_players = []
+        self.cur_off_players = []
+        self.cur_def_players = []
 
     def set_players(self):
         # Offense
@@ -299,3 +297,5 @@ class GameTime:
 b = Match("sample//team1.yaml", "sample//team1tactics.yaml", "sample//team2.yaml", "sample//team2tactics.yaml")
 b.step()
 print(b.state.possession)
+print(b.state.cur_def_players)
+print(b.state.cur_off_players)

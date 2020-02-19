@@ -12,5 +12,5 @@
          SF: {player120: 100, player121: 100},
          DIME: {player122: 100}, NICKEL: {player123: 100}, K: {player124: 100}, P: {player125: 100},
          KR: {player126: 100}, PR: {player127: 100}, GNR: {player128: 100, player129: 100},
-         SLOT: {player130: 100}, FB: {player131: 100}, TE: {player132: 100, player133: 100}}
+         SLOT: {player130: 100, player133: 100}, FB: {player131: 100}, TE: {player132: 100, player133: 100}}
 }

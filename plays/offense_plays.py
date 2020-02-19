@@ -19,6 +19,10 @@ class OffensePlay:
         self._block_style = block_style
 
     @property
+    def formation(self):
+        return self._formation
+
+    @property
     def assignments(self):
         return self._assignments
 

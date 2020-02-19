@@ -2,11 +2,15 @@ from enums import DefensiveAssignments
 from plays.defense_formation import FOUR_THREE, FOUR_FOUR, THREE_FOUR, DIME, NICKEL
 
 
-# Ordering is DL, LB, CB, SF going left to right, always from offense viewpoint
+# Ordering is DL, LB, CB, SF going left to right, always from offense viewpoint (make Plays a parent?)
 class DefensePlays:
     def __init__(self, formation, assignments):
         self._formation = formation
         self._assignments = assignments
+
+    @property
+    def formation(self):
+        return self._formation
 
 
 DEF_PLAY_LIST = {"Cover2Man": DefensePlays(FOUR_THREE,
