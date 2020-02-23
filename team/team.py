@@ -31,17 +31,30 @@ class MatchTeam(BaseTeam):
         for p in players:
             self.players.append(MatchPlayer.from_file("sample//players//" + p + ".yaml"))
         # Format {player: %} how does this interact with the roster???  Seems to be two issues at play
-        self._pos_rota = {Position.QB: rota["QB"], Position.RB: rota["RB"], Position.C: rota["C"],
-                          Position.CB: rota["CB"], Position.DE: rota["DE"], Position.DT: rota["DT"],
-                          Position.FB: rota["FB"], Position.GNR: rota["GNR"], Position.K: rota["K"],
-                          Position.KR: rota["KR"], Position.MLB: rota["MLB"], Position.NICKEL: rota["NICKEL"],
-                          Position.OG: rota["OG"], Position.OLB: rota["OLB"], Position.OT: rota["OT"],
-                          Position.P: rota["P"], Position.PR: rota["PR"], Position.SF: rota["SF"],
-                          Position.TE: rota["TE"], Position.WR: rota["WR"], Position.DIME: rota["DIME"],
-                          Position.SLOT: rota["SLOT"]}
+        self._pos_rota = {Position.QB: self.set_rota(rota["QB"]), Position.RB: self.set_rota(rota["RB"]),
+                          Position.C: self.set_rota(rota["C"]), Position.CB: self.set_rota(rota["CB"]),
+                          Position.DE: self.set_rota(rota["DE"]), Position.DT: self.set_rota(rota["DT"]),
+                          Position.FB: self.set_rota(rota["FB"]), Position.GNR: self.set_rota(rota["GNR"]),
+                          Position.K: self.set_rota(rota["K"]), Position.KR: self.set_rota(rota["KR"]),
+                          Position.MLB: self.set_rota(rota["MLB"]), Position.NICKEL: self.set_rota(rota["NICKEL"]),
+                          Position.OG: self.set_rota(rota["OG"]), Position.OLB: self.set_rota(rota["OLB"]),
+                          Position.OT: self.set_rota(rota["OT"]), Position.P: self.set_rota(rota["P"]),
+                          Position.PR: self.set_rota(rota["PR"]), Position.SF: self.set_rota(rota["SF"]),
+                          Position.TE: self.set_rota(rota["TE"]), Position.WR: self.set_rota(rota["WR"]),
+                          Position.DIME: self.set_rota(rota["DIME"]), Position.SLOT: self.set_rota(rota["SLOT"])}
+        print(self._pos_rota)
         self._state = TeamState()
         self._tactics = tactics
         # TODO: Something to do with tactics, how does the decision making process
+
+    @staticmethod
+    def set_rota(rota):
+        player_list = {}
+        stem = "sample//players//"
+        for player in rota:
+            # player_list.update({player: [MatchPlayer.from_file(stem + player + ".yaml"), rota[player]]})
+            player_list.update({MatchPlayer.from_file(stem + player + ".yaml"): rota[player]})
+        return player_list
 
     @classmethod
     def from_file(cls, file, tactics_file):

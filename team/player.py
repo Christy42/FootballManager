@@ -46,6 +46,10 @@ class MatchPlayer(PlayerBase):
                    stats["HEIGHT"], stats["AGE"], stats["OPTIMAL_AGE"], stats["COVERAGE"], stats["BLOCKING"],
                    stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["NAME"], stats["ID"])
 
+    @property
+    def speed(self):
+        return self.attributes.speed
+
 
 class PractisePlayer(MatchPlayer):
     def __init__(self, age, serve, shot_selection, accuracy, strength, strength_optimal, mobility, mobility_optimal,
@@ -71,6 +75,6 @@ class PlayerState:
         self._games_won_old_sets = [0]
 
 
-# b = MatchPlayer.from_file("..//sample//players//player.yaml")
+# b = MatchPlayer.from_file("..//sample//players//player11.yaml")
 # print(b.attributes.passing)
 # print(b.attributes.strength)

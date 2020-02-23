@@ -297,5 +297,8 @@ class GameTime:
 b = Match("sample//team1.yaml", "sample//team1tactics.yaml", "sample//team2.yaml", "sample//team2tactics.yaml")
 b.step()
 print(b.state.possession)
-print(b.state.cur_def_players)
-print(b.state.cur_off_players)
+for player in b.state.cur_def_players:
+    print(player[0].name)
+print("XXXXXXXXXXXXXX")
+for player in b.state.cur_off_players:
+    print(player[0].name)
