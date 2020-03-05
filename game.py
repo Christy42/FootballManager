@@ -6,7 +6,7 @@ from random import randint, choices
 from stack import Stack
 from enums import Possession, PlayStyle, Position
 from team.team import MatchTeam
-from procedures.clock_procedure import CoinFlip
+from procedures.total_play import FullPlay
 
 
 class Match:
@@ -36,7 +36,7 @@ class Match:
         """
         # EndGameProc(self)
         # PreGameProc(self)
-        CoinFlip(self)
+        FullPlay(self)
 
         while True:
             # Check if the game is over
@@ -68,7 +68,6 @@ class GameState:
         self._down = 1
         self._turnover = 0
         self._temp_yards = 0
-        self._quarter = 1
         self._outcome = None
         self._reports = []
         self.cur_off_play = None
@@ -186,10 +185,6 @@ class GameState:
         self._down = 1
 
     @property
-    def quarter(self):
-        return self._quarter
-
-    @property
     def team_1(self):
         return self._team_1
 
@@ -201,15 +196,8 @@ class GameState:
     def qtime(self):
         return self._time.game_time
 
-    def increase_quarter(self):
-        # TODO: Need to do things for the quarter -> 3 and quarter 5
-        self._quarter += 1
-
     def add_time(self, time_used):
         self._time.increase_time(time_used)
-        if self._time.game_time[0] >= 15:
-            self.increase_quarter()
-            self._time.reset_time()
 
     @property
     def report(self):

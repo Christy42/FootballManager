@@ -1,5 +1,4 @@
 from procedures.procedure import Procedure
-from procedures.end_play import EndPlay
 from random import random, choice
 
 from enums import PlayStyle, Side, Direction
@@ -14,7 +13,6 @@ class YAC(Procedure):
     def step(self):
         self.match.state.add_temp_yards(max(0, self._runner.strength + self._runner.carrying -
                                             self._tackler.strength - self._tackler.tackling))
-        EndPlay(self.match)
 
 
 class GetTackler(Procedure):

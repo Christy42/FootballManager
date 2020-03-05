@@ -19,3 +19,6 @@ class Stack:
 
     def size(self):
         return len(self.items)
+
+    def empty_out(self):
+        self.items = []
