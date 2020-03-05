@@ -69,12 +69,10 @@ class GameState:
         self._turnover = 0
         self._temp_yards = 0
         self._quarter = 1
-        self.offense_play = None
-        self.defense_play = None
         self._outcome = None
         self._reports = []
-        self._cur_off_play = None
-        self._cur_def_play = None
+        self.cur_off_play = None
+        self.cur_def_play = None
         self.tackler = 0
         self.cur_off_players = []
         self.cur_def_players = []
@@ -83,15 +81,15 @@ class GameState:
         # Offense
         for position in [Position.OT, Position.OG, Position.C, Position.WR, Position.TE, Position.FB, Position.QB,
                          Position.P, Position.K, Position.G]:
-            for i in range(self._offense_formation.positions[position]):
-                self._cur_off_players.append(choices(self.offense.players[position],
+            for i in range(self.cur_off_play.formation.positions[position]):
+                self.cur_off_players.append(choices(self.offense.players[position],
                                                      self.offense.player_weights[position])[0])
 
         for position in [Position.DE, Position.DT, Position.OLB, Position.MLB, Position.CB, Position.S, Position.N,
                          Position.KR, Position.PR]:
-            for i in range(self._defense_formation.positions[position]):
-                self._cur_def_players.append(choices(self.defense.players[position],
-                                                     self.defense.player_weights[position])[0])
+            for i in range(self.cur_def_play.formation.positions[position]):
+                self.cur_def_players.append(choices(self.defense.players[position],
+                                                    self.defense.player_weights[position])[0])
 
     def set_comm_values(self, outcome=None):
         self._outcome = outcome
@@ -134,9 +132,9 @@ class GameState:
         self._turnover_check()
         self._safety_check()
         self._td_check()
-        if self._cur_off_play.style == PlayStyle.RUN and self._possession == 0:
+        if self.cur_off_play.style == PlayStyle.RUN and self._possession == 0:
             self._time.increase_time(self._team_1_pace + randint(5, 10))
-        elif self._cur_off_play.style == PlayStyle.RUN:
+        elif self.cur_off_play.style == PlayStyle.RUN:
             self._time.increase_time(self._team_2_pace + randint(5, 10))
         else:
             # TODO: Need to deal with catches.  Maybe this goes elsewhere?
@@ -175,11 +173,11 @@ class GameState:
 
     @property
     def offense_formation(self):
-        return self._offense_formation
+        return self.cur_off_play.formation
 
     @property
     def defense_formation(self):
-        return self._defense_formation
+        return self.cur_def_play.formation
 
     def iterate_down(self):
         self._down = self._down % 4 + 1

@@ -12,6 +12,10 @@ class DefensePlays:
     def formation(self):
         return self._formation
 
+    @property
+    def assignments(self):
+        return self._assignments
+
 
 DEF_PLAY_LIST = {"Cover2Man": DefensePlays(FOUR_THREE,
                                            [DefensiveAssignments.LEFT_RUSH, DefensiveAssignments.CENTER_RUSH,

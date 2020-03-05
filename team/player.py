@@ -29,11 +29,11 @@ class PlayerBase:
 
 class MatchPlayer(PlayerBase):
     def __init__(self, passing, tackling, elusiveness, strength, speed, catching, jumping, vision, fitness, weight,
-                 height, age, optimal_age, coverage, blocking, awareness, route_running, carrying, name, id_no):
+                 height, age, optimal_age, coverage, blocking, awareness, route_running, carrying, rush, name, id_no):
         super().__init__(name, id_no)
         self.attributes = MatchAttributes(passing, tackling, elusiveness, strength, speed, catching, jumping, vision,
                                           fitness, weight, height, age, optimal_age, coverage, blocking,
-                                          carrying, route_running, awareness)
+                                          carrying, route_running, awareness, rush)
 
         self.state = PlayerState()
 
@@ -44,11 +44,36 @@ class MatchPlayer(PlayerBase):
         return cls(stats["PASSING"], stats["TACKLING"], stats["ELUSIVENESS"], stats["STRENGTH"], stats["SPEED"],
                    stats["CATCHING"], stats["JUMPING"], stats["VISION"], stats["FITNESS"], stats["WEIGHT"],
                    stats["HEIGHT"], stats["AGE"], stats["OPTIMAL_AGE"], stats["COVERAGE"], stats["BLOCKING"],
-                   stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["NAME"], stats["ID"])
+                   stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["RUSH"], stats["NAME"],
+                   stats["ID"])
 
     @property
     def speed(self):
         return self.attributes.speed
+
+    @property
+    def strength(self):
+        return self.attributes.strength
+
+    @property
+    def tackling(self):
+        return self.attributes.tackling
+
+    @property
+    def carrying(self):
+        return self.attributes.carrying
+
+    @property
+    def blocking(self):
+        return self.attributes.blocking
+
+    @property
+    def elusiveness(self):
+        return self.attributes.elusiveness
+
+    @property
+    def rush(self):
+        return self.attributes.rush
 
 
 class PractisePlayer(MatchPlayer):

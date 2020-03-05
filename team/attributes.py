@@ -89,7 +89,7 @@ class StaminaAttribute(PhysicalAttribute):
 
 class MatchAttributes:
     def __init__(self, passing, tackling, elusiveness, strength, speed, catching, jumping, vision, fitness, weight,
-                 height, age, optimal_age, coverage, blocking, carrying, route_running, awareness):
+                 height, age, optimal_age, coverage, blocking, carrying, route_running, awareness, rush):
         self._stamina = StaminaAttribute("stamina", fitness, age, optimal_age)
         self._passing = Attribute("passing", passing, age, optimal_age)
         self._catching = Attribute("catching", catching, age, optimal_age)
@@ -104,10 +104,15 @@ class MatchAttributes:
         self._strength = PhysicalAttribute("strength", strength, age, optimal_age)
         self._speed = PhysicalAttribute("speed", speed, age, optimal_age)
         self._elusiveness = PhysicalAttribute("elusiveness", elusiveness, age, optimal_age)
+        self._rush = Attribute("rush", rush, age, optimal_age)
 
     @property
     def stamina(self):
         return self._stamina.value
+
+    @property
+    def rush(self):
+        return self._rush.value
 
     @property
     def passing(self):

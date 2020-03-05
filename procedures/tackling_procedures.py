@@ -1,8 +1,8 @@
 from procedures.procedure import Procedure
-from procedures.clock_procedure import EndPlay
+from procedures.end_play import EndPlay
 from random import random, choice
 
-from enums import PlayStyle, Side
+from enums import PlayStyle, Side, Direction
 
 
 class YAC(Procedure):
@@ -13,7 +13,7 @@ class YAC(Procedure):
 
     def step(self):
         self.match.state.add_temp_yards(max(0, self._runner.strength + self._runner.carrying -
-                                            self._tackler - self._tackler))
+                                            self._tackler.strength - self._tackler.tackling))
         EndPlay(self.match)
 
 
@@ -24,19 +24,21 @@ class GetTackler(Procedure):
     def step(self):
         # TODO: Vary these based off of formation and weighted probabilities
         if self.match.state.cur_off_play.style == PlayStyle.RUN:
-            if self.match.state.cur_off_play.direction == Side.LEFT:
+            if self.match.state.cur_off_play.direction == Direction.LEFT:
                 return choice([1, 2, 5, 6])
-            elif self.match.state.cur_off_play.direction == Side.CENTER:
+            elif self.match.state.cur_off_play.direction == Direction.MIDDLE:
                 return choice([2, 3, 6, 7])
-            elif self.match.state.cur_off_play.direction == Side.RIGHT:
+            elif self.match.state.cur_off_play.direction == Direction.RIGHT:
                 return choice([3, 4, 7, 8])
 
 
 class Tackling(Procedure):
     def __init__(self, match, runner, tackler):
         super().__init__(match)
-        self._tackler = tackler
-        self._runner = runner
+        self._tackler = tackler[0]
+        print(tackler)
+        print(runner)
+        self._runner = runner[0]
 
     def step(self):
         if random() > (self._tackler.strength + self._tackler.tackling / self._runner.strength + self._runner.carrying):

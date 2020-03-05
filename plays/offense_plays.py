@@ -23,8 +23,20 @@ class OffensePlay:
         return self._formation
 
     @property
+    def side(self):
+        return self._direction
+
+    @property
+    def runner(self):
+        return self._runner
+
+    @property
     def assignments(self):
         return self._assignments
+
+    @property
+    def style(self):
+        return self._style
 
     @property
     def block_style(self):

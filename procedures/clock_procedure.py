@@ -1,5 +1,9 @@
 from procedures.procedure import Procedure
+from procedures.run_procedure import Run
 import random
+
+
+from enums import PlayStyle
 
 
 class EndQuarter(Procedure):
@@ -34,16 +38,6 @@ class RunClock(Procedure):
         pass
 
 
-class EndPlay(Procedure):
-    # TODO: I guess calls a figure next play function which then calls run or pass etc. as appropriate
-    def __init__(self, match):
-        super().__init__(match)
-
-    def step(self):
-        # TODO: Need to turn temp yards into real yards, recalculate down and distance.  Deal with TD/ Safety
-        self.match.state.end_play_checks()
-
-
 class ChoosePlayers(Procedure):
     def __init__(self, match):
         super().__init__(match)
@@ -58,6 +52,21 @@ class ChoosePlayers(Procedure):
                 self.match.state.team_2.choose_offense(self.match.state.cur_off_play.formation)
             self.match.state.cur_def_players = \
                 self.match.state.team_1.choose_defense(self.match.state.cur_def_play.formation)
+        RunPlay(self.match)
+
+
+class RunPlay(Procedure):
+    def __init__(self, match):
+        super().__init__(match)
+
+    def step(self):
+        # I guess something for if we have a run play or a pass play.
+        if self.match.state.cur_off_play.style == PlayStyle.RUN:
+            Run(self.match)
+        elif self.match.state.cur_off_play.style == PlayStyle.PASS:
+            pass
+        elif self.match.state.cur_off_play.style == PlayStyle.SPECIAL:
+            pass
 
 
 class ChoosePlay(Procedure):
