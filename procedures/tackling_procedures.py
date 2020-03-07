@@ -1,7 +1,7 @@
 from procedures.procedure import Procedure
 from random import random, choice
 
-from enums import PlayStyle, Side, Direction
+from enums import PlayStyle, Side
 
 
 class YAC(Procedure):
@@ -22,11 +22,11 @@ class GetTackler(Procedure):
     def step(self):
         # TODO: Vary these based off of formation and weighted probabilities
         if self.match.state.cur_off_play.style == PlayStyle.RUN:
-            if self.match.state.cur_off_play.direction == Direction.LEFT:
+            if self.match.state.cur_off_play.direction == Side.LEFT:
                 return choice([1, 2, 5, 6])
-            elif self.match.state.cur_off_play.direction == Direction.MIDDLE:
+            elif self.match.state.cur_off_play.direction == Side.CENTER:
                 return choice([2, 3, 6, 7])
-            elif self.match.state.cur_off_play.direction == Direction.RIGHT:
+            elif self.match.state.cur_off_play.direction == Side.RIGHT:
                 return choice([3, 4, 7, 8])
 
 
@@ -34,15 +34,12 @@ class Tackling(Procedure):
     def __init__(self, match, runner, tackler):
         super().__init__(match)
         self._tackler = tackler[0]
-        print(tackler)
-        print(runner)
         self._runner = runner[0]
 
     def step(self):
         if random() > (self._tackler.strength + self._tackler.tackling / self._runner.strength + self._runner.carrying):
             # TODO: How many more yards from a failed tackle and who is the next tackler (if any)
             Tackling(self.match, self._runner, self._tackler)
-            pass
         else:
             Fumble(self.match, self._runner, self._tackler)
         # TODO: That should depend on how many yards have gone

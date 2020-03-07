@@ -116,7 +116,9 @@ class GameState:
         self._temp_yards += tmp
 
     def flush_temp_yards(self):
-        self._ball_location += self._temp_yards
+        self._ball_location = round(self._temp_yards + self._ball_location, 2)
+        print("all loc")
+        print(self._ball_location)
         if self._ball_location >= self._first_down_marker:
             self._first_down_marker = min(100, self._ball_location + 10)
             self.reset_down()

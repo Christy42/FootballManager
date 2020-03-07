@@ -1,4 +1,4 @@
-from enums import OffenseFormation, PlayStyle, Direction, OffensiveAssignments, RunStyle
+from enums import OffenseFormation, PlayStyle, Side, OffensiveAssignments, RunStyle
 from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM
 
 
@@ -50,5 +50,5 @@ OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN,
                                           OffensiveAssignments.FADE_LEFT, OffensiveAssignments.FADE_RIGHT,
                                           OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
                                           OffensiveAssignments.QB],
-                                         Direction.MIDDLE, 7, 7, "Man Center Run",
-                                         "Man Center Run", RunStyle.MAN)}
+                                          Side.CENTER, 7, 7, "Man Center Run",
+                                          "Man Center Run", RunStyle.MAN)}

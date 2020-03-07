@@ -180,9 +180,3 @@ class DefensiveAssignments(Enum):
     LONG_LEFT_COVER = 16
     LONG_CENTER_COVER = 17
     LONG_RIGHT_COVER = 18
-
-
-class Direction(Enum):
-    LEFT = 1
-    MIDDLE = 2
-    RIGHT = 3

@@ -2,7 +2,7 @@ from random import choice
 
 from procedures.tackling_procedures import Tackling
 from procedures.procedure import Procedure
-from enums import Side, RunStyle, OffensiveAssignments, DefensiveAssignments, PlayStyle, Direction
+from enums import Side, RunStyle, OffensiveAssignments, DefensiveAssignments, PlayStyle, Side
 
 
 # TODO: What types of run are there?  How do they differ.  Probably don't need new ones for each side
@@ -30,14 +30,12 @@ class Run(Procedure):
     def get_tackler(self):
         tackler = 10
         if self.match.state.cur_off_play.style == PlayStyle.RUN:
-            print("XX")
-            if self.match.state.cur_off_play.side == Direction.LEFT:
+            if self.match.state.cur_off_play.side == Side.LEFT:
                 tackler = choice([1, 2, 5, 6])
-            elif self.match.state.cur_off_play.side == Direction.MIDDLE:
+            elif self.match.state.cur_off_play.side == Side.CENTER:
                 tackler = choice([2, 3, 6, 7])
-            elif self.match.state.cur_off_play.side == Direction.RIGHT:
+            elif self.match.state.cur_off_play.side == Side.RIGHT:
                 tackler = choice([3, 4, 7, 8])
-        print(tackler)
         return tackler
 
 
@@ -62,6 +60,9 @@ class YBCRun(Procedure):
             self.match.state.add_temp_yards((self._center_block - self._center_rush) / 100)
         elif self.match.state.cur_off_play.side == Side.RIGHT:
             self.match.state.add_temp_yards((self._right_block - self._right_rush) / 100)
+        print("DDDDDDDDDDDDDDDDDD")
+        print((self._center_block-self._center_rush)/100)
+        print(self.match.state.cur_off_play.side)
         # how do we figure the yards??
 
     def block_addition(self, player):
