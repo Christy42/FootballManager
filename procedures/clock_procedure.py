@@ -43,7 +43,8 @@ class ChoosePlayers(Procedure):
         if self.match.state.possession == 0:
             self.match.state.cur_off_players = \
                 self.match.state.team_1.choose_offense(self.match.state.cur_off_play.formation)
-            self.match.state.cur_def_players = self.match.state.team_2.choose_defense(self.match.state.cur_def_play.formation)
+            self.match.state.cur_def_players = \
+                self.match.state.team_2.choose_defense(self.match.state.cur_def_play.formation)
         else:
             self.match.state.cur_off_players = \
                 self.match.state.team_2.choose_offense(self.match.state.cur_off_play.formation)

@@ -55,7 +55,6 @@ class Fumble(Procedure):
     def step(self):
         if random() > (self._tackler.strength + self._tackler.tackling / self._runner.strength + self._runner.carrying):
             self.match.state.blue_flag = 1
-            EndPlay(self.match)
-            # TODO: Eventually need a return distance but works for now
+            # TODO: Will this end the play??
         else:
             YAC(self.match, self._runner, self._tackler)

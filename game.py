@@ -1,6 +1,5 @@
 from copy import deepcopy
 import math
-import yaml
 from random import randint, choices
 
 from stack import Stack
@@ -73,6 +72,7 @@ class GameState:
         self.cur_off_play = None
         self.cur_def_play = None
         self.tackler = 0
+        self._initial = None
         self.cur_off_players = []
         self.cur_def_players = []
 
@@ -82,7 +82,7 @@ class GameState:
                          Position.P, Position.K, Position.G]:
             for i in range(self.cur_off_play.formation.positions[position]):
                 self.cur_off_players.append(choices(self.offense.players[position],
-                                                     self.offense.player_weights[position])[0])
+                                                    self.offense.player_weights[position])[0])
 
         for position in [Position.DE, Position.DT, Position.OLB, Position.MLB, Position.CB, Position.S, Position.N,
                          Position.KR, Position.PR]:
@@ -117,8 +117,9 @@ class GameState:
 
     def flush_temp_yards(self):
         self._ball_location = round(self._temp_yards + self._ball_location, 2)
-        print("all loc")
-        print(self._ball_location)
+        print("loc " + str(self._ball_location))
+        print("possession " + str(self._possession))
+        print("down " + str(self._down))
         if self._ball_location >= self._first_down_marker:
             self._first_down_marker = min(100, self._ball_location + 10)
             self.reset_down()
@@ -133,20 +134,23 @@ class GameState:
         self._turnover_check()
         self._safety_check()
         self._td_check()
+        # Doubling up here a bit makes this difficult
+
         if self.cur_off_play.style == PlayStyle.RUN and self._possession == 0:
-            self._time.increase_time(self._team_1_pace + randint(5, 10))
-        elif self.cur_off_play.style == PlayStyle.RUN:
-            self._time.increase_time(self._team_2_pace + randint(5, 10))
+            self.add_time(min(self._team_1_pace if self._possession == 0 else self._team_2_pace + randint(5, 10), 40))
         else:
-            # TODO: Need to deal with catches.  Maybe this goes elsewhere?
-            self._time.increase_time(randint(5, 10))
+            # TODO: Need to deal with catches in bounds or out of bounds.  Maybe this goes elsewhere?
+            self.add_time(randint(5, 10))
 
     def _turnover_check(self):
         if self._turnover == 1:
             self._turnover = 0
             self.reset_down()
             self._ball_location = 100 - self._ball_location
-            # TODO: Turn over possession
+            self._switch_possession()
+
+    def _switch_possession(self):
+        self._possession = (self._possession + 1) % 2
 
     def _td_check(self):
         if self._ball_location > 100:
@@ -154,6 +158,8 @@ class GameState:
                 self.team_1.state.add_score(6)
             else:
                 self.team_2.state.add_score(6)
+            self._ball_location = 35
+            self._switch_possession()
             # TODO: Need to restart here, Need the extra point attempt here as well
 
     def _safety_check(self):
@@ -181,7 +187,13 @@ class GameState:
         return self.cur_def_play.formation
 
     def iterate_down(self):
+        if self._down == 4:
+
+            self.blue_flag()
         self._down = self._down % 4 + 1
+
+    def set_initial(self, a):
+        self._initial = a
 
     def reset_down(self):
         self._down = 1
@@ -199,7 +211,12 @@ class GameState:
         return self._time.game_time
 
     def add_time(self, time_used):
-        self._time.increase_time(time_used)
+        dfa = self._time.increase_time(time_used)
+        print("dfa " + str(dfa))
+        if dfa == 1:
+            print("The half is changing")
+            self.set_possession((self._initial + 1) % 2)
+            self._ball_location = 35
 
     @property
     def report(self):
@@ -273,9 +290,13 @@ class GameTime:
             self._minutes = 0
             self._seconds = 0
             self._quarter += 1
-            if self._quarter > 5:
-                # TODO: End game
-                pass
+            print("quarter " + str(self._quarter))
+            if self._quarter == 3:
+                print("XChange")
+                self._half += 1
+                return 1
+                # TODO: How to reset the half????
+        return 0
 
     def reset_time(self):
         self._minutes = 0
@@ -285,8 +306,11 @@ class GameTime:
 b = Match("sample//team1.yaml", "sample//team1tactics.yaml", "sample//team2.yaml", "sample//team2tactics.yaml")
 b.step()
 print(b.state.possession)
-for player in b.state.cur_def_players:
-    print(player[0].name)
-print("XXXXXXXXXXXXXX")
-for player in b.state.cur_off_players:
-    print(player[0].name)
+# for player in b.state.cur_def_players:
+#    print(player[0].name)
+# print("XXXXXXXXXXXXXX")
+# for player in b.state.cur_off_players:
+#     print(player[0].name)
+print("XXXX")
+print(b.state.team_1.state.score)
+print(b.state.team_2.state.score)

@@ -9,7 +9,6 @@ class EndPlay(Procedure):
     def step(self):
         # TODO: Need to turn temp yards into real yards, recalculate down and distance.  Deal with TD/ Safety
         print("result")
-        print(self.match.state.temp_yards)
         print(self.match.state._time.game_time)
         print(self.match.state._time.quarter)
         print("end_res")

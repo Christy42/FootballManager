@@ -14,8 +14,6 @@ class FullPlay(Procedure):
         ChoosePlayers(self.match)
         ChoosePlay(self.match)
         CoinFlip(self.match)
-        print("CCCC")
-        print(self.match.state._stack.items)
 
 
 class Restart(Procedure):
