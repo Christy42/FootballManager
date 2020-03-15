@@ -76,6 +76,9 @@ class GameState:
         self.cur_off_players = []
         self.cur_def_players = []
 
+    def set_ball_loc(self, placement):
+        self._ball_location = placement
+
     def set_players(self):
         # Offense
         for position in [Position.OT, Position.OG, Position.C, Position.WR, Position.TE, Position.FB, Position.QB,
@@ -135,7 +138,6 @@ class GameState:
         self._safety_check()
         self._td_check()
         # Doubling up here a bit makes this difficult
-
         if self.cur_off_play.style == PlayStyle.RUN and self._possession == 0:
             self.add_time(min(self._team_1_pace if self._possession == 0 else self._team_2_pace + randint(5, 10), 40))
         else:

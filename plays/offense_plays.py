@@ -5,6 +5,7 @@ from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, 
 # Ordering (changes slightly depending on formation, RB, TEs go in for later WRs
 # OT, OG, C, OG, OT, WR1, WR2, WR3, WR4, RB1, QB
 # OT, OG, C, OG, OT, WR1, WR2, WR3, RB1, TE1, QB
+# K ......
 class OffensePlay:
     def __init__(self, formation, style, assignments, direction, runner, primary, name, com_name, block_style):
         self._assignments = assignments
