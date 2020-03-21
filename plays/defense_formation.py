@@ -1,9 +1,14 @@
 class DefenseFormation:
-    def __init__(self, no_dl, no_lb, no_cb, no_sf):
+    def __init__(self, no_dl=0, no_lb=0, no_cb=0, no_sf=0, no_kr=0):
         self._no_dl = no_dl
         self._no_lb = no_lb
         self._no_cb = no_cb
         self._no_sf = no_sf
+        self._no_kr = no_kr
+
+    @property
+    def no_kr(self):
+        return self._no_kr
 
     @property
     def no_dl(self):
@@ -23,8 +28,9 @@ class DefenseFormation:
 
 
 # TODO: Need kick formations
-FOUR_FOUR = DefenseFormation(4, 4, 2, 1)
-THREE_FOUR = DefenseFormation(3, 4, 2, 2)
-FOUR_THREE = DefenseFormation(4, 3, 2, 2)
-NICKEL = DefenseFormation(4, 2, 3, 2)
-DIME = DefenseFormation(4, 1, 4, 2)
+FOUR_FOUR = DefenseFormation(no_dl=4, no_lb=4, no_cb=2, no_sf=1)
+THREE_FOUR = DefenseFormation(no_dl=3, no_lb=4, no_cb=2, no_sf=2)
+FOUR_THREE = DefenseFormation(no_dl=4, no_lb=3, no_cb=2, no_sf=2)
+NICKEL = DefenseFormation(no_dl=4, no_lb=2, no_cb=3, no_sf=2)
+DIME = DefenseFormation(no_dl=4, no_lb=1, no_cb=4, no_sf=2)
+KICK_RETURN = DefenseFormation(no_cb=4, no_lb=4, no_kr=1, no_sf=0)

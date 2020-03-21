@@ -12,11 +12,11 @@ class CoinFlip(Procedure):
         if random.randint(0, 1) == 0:
             self.match.state.set_possession(0)
             self.match.state.set_initial(0)
-            KickOff(self.match)
+            # KickOff(self.match)
         else:
             self.match.state.set_possession(1)
             self.match.state.set_initial(1)
-            KickOff(self.match)
+            # KickOff(self.match)
 
 
 class ChoosePlay(Procedure):

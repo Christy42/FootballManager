@@ -1,7 +1,7 @@
 import yaml
 import random
 
-from utils import get_pos
+from utils import get_pos, append_att
 from enums import OffenseFormation, DefenseFormation, Position
 from team.player import MatchPlayer
 from plays.defense_plays import DEF_PLAY_LIST
@@ -80,35 +80,34 @@ class MatchTeam(BaseTeam):
     def choose_offense(self, formation):
         # how are we ordering this.  Kind of want to do the optional stuff first.  Still just assuming it works
         # which is bad.  Soooo lets go with FB, SLOT2, TE2, SLOT1, TE1, RB1, WR1, WR2, OT1, OT2, OG1, OG2, C, QB
-        # OT, OG, C, OG, OT, WR1, WR2, WR3, WR4, RB1, QB
+        # Then order like OT, OG, C, OG, OT, WR1, WR2, WR3, WR4, RB1, QB
+        # TODO: Kicking
         # Need to assure no duplicates
         # While True is emulating a do loop
         # This is all overly long and weird, need a better way of doing this
         cur_list = []
-        if formation.no_rbs > 1:
-            fb = get_pos(cur_list, self._pos_rota[Position.FB])
-            cur_list.append(fb)
-        if formation.no_wrs > 3:
-            wr4 = get_pos(cur_list, self._pos_rota[Position.SLOT])
-            cur_list.append(wr4)
-        if formation.no_tes > 1:
-            te2 = get_pos(cur_list, self._pos_rota[Position.TE])
-            cur_list.append(te2)
-        if formation.no_wrs > 2:
-            wr3 = get_pos(cur_list, self._pos_rota[Position.SLOT])
-            cur_list.append(wr3)
-        if formation.no_tes > 0:
-            te = get_pos(cur_list, self._pos_rota[Position.TE])
-            cur_list.append(te)
-        if formation.no_rbs > 0:
-            rb = get_pos(cur_list, self._pos_rota[Position.RB])
-            cur_list.append(rb)
-        if formation.no_wrs > 1:
-            wr2 = get_pos(cur_list, self._pos_rota[Position.WR])
-            cur_list.append(wr2)
-        if formation.no_wrs > 0:
-            wr1 = get_pos(cur_list, self._pos_rota[Position.WR])
-            cur_list.append(wr1)
+        k = get_pos(cur_list, self._pos_rota[Position.K]) if formation.no_k > 0 else None
+        cur_list.append(k)
+        gnr2 = get_pos(cur_list, self._pos_rota[Position.GNR]) if formation.no_gnr > 1 else None
+        cur_list.append(gnr2)
+        gnr1 = get_pos(cur_list, self._pos_rota[Position.GNR]) if formation.no_gnr > 0 else None
+        cur_list.append(gnr1)
+        fb = get_pos(cur_list, self._pos_rota[Position.FB]) if formation.no_rbs > 1 else None
+        cur_list.append(fb)
+        wr4 = get_pos(cur_list, self._pos_rota[Position.SLOT]) if formation.no_wrs > 3 else None
+        cur_list.append(wr4)
+        te2 = get_pos(cur_list, self._pos_rota[Position.TE]) if formation.no_tes > 1 else None
+        cur_list.append(te2)
+        wr3 = get_pos(cur_list, self._pos_rota[Position.SLOT]) if formation.no_wrs > 2 else None
+        cur_list.append(wr3)
+        te = get_pos(cur_list, self._pos_rota[Position.TE]) if formation.no_tes > 0 else None
+        cur_list.append(te)
+        rb = get_pos(cur_list, self._pos_rota[Position.RB]) if formation.no_rbs > 0 else None
+        cur_list.append(rb)
+        wr2 = get_pos(cur_list, self._pos_rota[Position.WR]) if formation.no_wrs > 1 else None
+        cur_list.append(wr2)
+        wr1 = get_pos(cur_list, self._pos_rota[Position.WR]) if formation.no_wrs > 0 else None
+        cur_list.append(wr1)
         ot2 = get_pos(cur_list, self._pos_rota[Position.OT])
         cur_list.append(ot2)
         ot1 = get_pos(cur_list, self._pos_rota[Position.OT])
@@ -119,65 +118,27 @@ class MatchTeam(BaseTeam):
         cur_list.append(og1)
         c = get_pos(cur_list, self._pos_rota[Position.C])
         cur_list.append(c)
-        qb = get_pos(cur_list, self._pos_rota[Position.QB])
+        qb = get_pos(cur_list, self._pos_rota[Position.QB]) if formation.no_k < 1 else None
         cur_list.append(qb)
-        players = [ot2, og2, c, og1, ot1]
-        try:
-            players.append(wr1)
-        except NameError:
-            pass
-        try:
-            players.append(wr2)
-        except NameError:
-            pass
-        try:
-            players.append(wr3)
-        except NameError:
-            pass
-        try:
-            players.append(wr4)
-        except NameError:
-            pass
-        try:
-            players.append(rb)
-        except NameError:
-            pass
-        try:
-            players.append(fb)
-        except NameError:
-            pass
-        try:
-            players.append(te)
-        except NameError:
-            pass
-        try:
-            players.append(te2)
-        except NameError:
-            pass
-        players.append(qb)
-        return players
+        # Should eventually be a class really instead of relying on numbers.
+        players = [ot2, og2, c, og1, ot1, wr1, wr2, wr3, wr4, rb, fb, te, te2, qb, k]
+        return [x for x in players if x is not None]
 
     # ordering of DE1, DT1, DT2, DE2, MLB1, MLB2, OLB1, OLB2, NICKEL, DIME, CB1, CB2, SF1, SF2 as appropriate
     def choose_defense(self, formation):
         cur_list = []
-        if formation.no_cb > 3:
-            dime = get_pos(cur_list, self._pos_rota[Position.DIME])
-            cur_list.append(dime)
-        if formation.no_cb > 2:
-            nick = get_pos(cur_list, self._pos_rota[Position.NICKEL])
-            cur_list.append(nick)
-        if formation.no_lb > 3:
-            mlb2 = get_pos(cur_list, self._pos_rota[Position.MLB])
-            cur_list.append(mlb2)
-        if formation.no_lb > 1:
-            olb1 = get_pos(cur_list, self._pos_rota[Position.OLB])
-            cur_list.append(olb1)
-        if formation.no_lb > 2:
-            olb2 = get_pos(cur_list, self._pos_rota[Position.OLB])
-            cur_list.append(olb2)
-        if formation.no_dl > 3:
-            dt2 = get_pos(cur_list, self._pos_rota[Position.DT])
-            cur_list.append(dt2)
+        dime = get_pos(cur_list, self._pos_rota[Position.DIME]) if formation.no_cb > 3 else None
+        cur_list.append(dime)
+        nick = get_pos(cur_list, self._pos_rota[Position.NICKEL]) if formation.no_cb > 2 else None
+        cur_list.append(nick)
+        mlb2 = get_pos(cur_list, self._pos_rota[Position.MLB]) if formation.no_lb > 3 else None
+        cur_list.append(mlb2)
+        olb1 = get_pos(cur_list, self._pos_rota[Position.OLB]) if formation.no_lb > 1 else None
+        cur_list.append(olb1)
+        olb2 = get_pos(cur_list, self._pos_rota[Position.OLB]) if formation.no_lb > 2 else None
+        cur_list.append(olb2)
+        dt2 = get_pos(cur_list, self._pos_rota[Position.DT]) if formation.no_dl > 3 else None
+        cur_list.append(dt2)
         de2 = get_pos(cur_list, self._pos_rota[Position.DE])
         cur_list.append(de2)
         de1 = get_pos(cur_list, self._pos_rota[Position.DE])
@@ -194,40 +155,8 @@ class MatchTeam(BaseTeam):
         cur_list.append(sf1)
         sf2 = get_pos(cur_list, self._pos_rota[Position.SF])
         cur_list.append(sf2)
-        players = [de1, dt1]
-        # This bit could be a list passed in and it tries to do it elsewhere though how to pass in a non created element
-        try:
-            players.append(dt2)
-        except NameError:
-            pass
-        players.append(de2)
-        players.append(mlb1)
-        try:
-            players.append(mlb2)
-        except NameError:
-            pass
-        try:
-            players.append(olb1)
-        except NameError:
-            pass
-        try:
-            players.append(olb2)
-        except NameError:
-            pass
-        try:
-            players.append(nick)
-        except NameError:
-            pass
-        try:
-            players.append(dime)
-        except NameError:
-            pass
-        players.append(cb1)
-
-        players.append(cb2)
-        players.append(sf1)
-        players.append(sf2)
-        return players
+        players = [de1, dt1, dt2, de2, mlb1, mlb2, olb1, olb2, nick, dime, cb1, cb2, sf1, sf2]
+        return [x for x in players if x is not None]
 
 
 class TeamState:
