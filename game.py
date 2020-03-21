@@ -75,6 +75,7 @@ class GameState:
         self._initial = None
         self.cur_off_players = []
         self.cur_def_players = []
+        self.kicking = False
 
     def set_ball_loc(self, placement):
         self._ball_location = placement

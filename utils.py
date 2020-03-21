@@ -18,4 +18,3 @@ def get_pos(cur_list, rota):
         if counter > 1000:
             print("No value possible in {}".format(rota))
             return 0
-

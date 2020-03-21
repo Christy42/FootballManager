@@ -29,11 +29,12 @@ class PlayerBase:
 
 class MatchPlayer(PlayerBase):
     def __init__(self, passing, tackling, elusiveness, strength, speed, catching, jumping, vision, fitness, weight,
-                 height, age, optimal_age, coverage, blocking, awareness, route_running, carrying, rush, name, id_no):
+                 height, age, optimal_age, coverage, blocking, awareness, route_running, carrying, rush, kicking,
+                 name, id_no):
         super().__init__(name, id_no)
         self.attributes = MatchAttributes(passing, tackling, elusiveness, strength, speed, catching, jumping, vision,
                                           fitness, weight, height, age, optimal_age, coverage, blocking,
-                                          carrying, route_running, awareness, rush)
+                                          carrying, route_running, awareness, rush, kicking)
 
         self.state = PlayerState()
 
@@ -44,8 +45,8 @@ class MatchPlayer(PlayerBase):
         return cls(stats["PASSING"], stats["TACKLING"], stats["ELUSIVENESS"], stats["STRENGTH"], stats["SPEED"],
                    stats["CATCHING"], stats["JUMPING"], stats["VISION"], stats["FITNESS"], stats["WEIGHT"],
                    stats["HEIGHT"], stats["AGE"], stats["OPTIMAL_AGE"], stats["COVERAGE"], stats["BLOCKING"],
-                   stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["RUSH"], stats["NAME"],
-                   stats["ID"])
+                   stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["RUSH"], stats["KICK"],
+                   stats["NAME"], stats["ID"])
 
     @property
     def speed(self):
@@ -54,6 +55,10 @@ class MatchPlayer(PlayerBase):
     @property
     def strength(self):
         return self.attributes.strength
+
+    @property
+    def kicking(self):
+        return self.attributes.kicking
 
     @property
     def tackling(self):

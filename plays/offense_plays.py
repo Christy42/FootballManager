@@ -1,5 +1,5 @@
 from enums import OffenseFormation, PlayStyle, Side, OffensiveAssignments, RunStyle
-from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM
+from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM, KICK_OFF
 
 
 # Ordering (changes slightly depending on formation, RB, TEs go in for later WRs
@@ -52,4 +52,12 @@ OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN,
                                           OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
                                           OffensiveAssignments.QB],
                                           Side.CENTER, 7, 7, "Man Center Run",
-                                          "Man Center Run", RunStyle.MAN)}
+                                          "Man Center Run", RunStyle.MAN),
+                 "KickOff": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
+                                        [OffensiveAssignments.LEFT_BLOCK, OffensiveAssignments.CENTER_BLOCK,
+                                         OffensiveAssignments.CENTER_BLOCK, OffensiveAssignments.CENTER_BLOCK,
+                                         OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.FADE_LEFT,
+                                         OffensiveAssignments.FADE_LEFT, OffensiveAssignments.FADE_RIGHT,
+                                         OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
+                                         OffensiveAssignments.KICK], Side.CENTER, 7, 7, "Kick Off", "Kick Off",
+                                        None)}

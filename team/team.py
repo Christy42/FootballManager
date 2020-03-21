@@ -1,7 +1,7 @@
 import yaml
 import random
 
-from utils import get_pos, append_att
+from utils import get_pos
 from enums import OffenseFormation, DefenseFormation, Position
 from team.player import MatchPlayer
 from plays.defense_plays import DEF_PLAY_LIST
@@ -69,7 +69,9 @@ class MatchTeam(BaseTeam):
         return self._id
 
     # TODO: Probably add in down/distance stuff but leave for now
-    def choose_play_offense(self):
+    def choose_play_offense(self, kick=False):
+        if kick:
+            return OFF_PLAY_LIST["KickOff"]
         choice = random.choices(list(self._tactics["offense"].keys()), weights=list(self._tactics["offense"].values()))
         return OFF_PLAY_LIST[choice[0]]
 
@@ -121,7 +123,8 @@ class MatchTeam(BaseTeam):
         qb = get_pos(cur_list, self._pos_rota[Position.QB]) if formation.no_k < 1 else None
         cur_list.append(qb)
         # Should eventually be a class really instead of relying on numbers.
-        players = [ot2, og2, c, og1, ot1, wr1, wr2, wr3, wr4, rb, fb, te, te2, qb, k]
+        players = [ot2, og2, c, og1, ot1, wr1, wr2, wr3, wr4, rb, fb, te, te2, gnr1, gnr2, qb, k]
+        print(players)
         return [x for x in players if x is not None]
 
     # ordering of DE1, DT1, DT2, DE2, MLB1, MLB2, OLB1, OLB2, NICKEL, DIME, CB1, CB2, SF1, SF2 as appropriate
