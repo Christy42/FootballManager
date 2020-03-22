@@ -12,16 +12,18 @@ class KickOff(Procedure):
         kicker = self.match.state.cur_off_players[10][0]
         returner = self.match.state.cur_def_players[10][0]
         self.match.state.kicking = False
-        distance = round(kicker.kicking / 300) + 30 + random.randint(0, 30)
+        distance = round(kicker.kicking / 30) + 60 + random.randint(0, 30)
+        print("distance " + str(distance))
         # TODO: A proper return
         # TODO: How and when to call this, probably in coin flip and after TDs, Kicks
         self.match.state.blue_flag()
         if distance > 85 or (distance > 75 and returner.speed < 500):
             print("stable")
-            self.match.state.set_ball_loc(25)
+            self.match.state.set_ball_loc(75)
         else:
-            print("return")
-            self.match.state.set_ball_loc(distance - round(returner.speed / 500) - random.randint(5, 20))
+            final = distance - round(returner.speed / 500) - random.randint(5, 20)
+            print("return " + str(final))
+            self.match.state.set_ball_loc(final)
 
 
 class Kick(Procedure):

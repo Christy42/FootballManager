@@ -147,6 +147,7 @@ class GameState:
 
     def _turnover_check(self):
         if self._turnover == 1:
+            print("turned over")
             self._turnover = 0
             self.reset_down()
             self._ball_location = 100 - self._ball_location
@@ -161,8 +162,7 @@ class GameState:
                 self.team_1.state.add_score(6)
             else:
                 self.team_2.state.add_score(6)
-            self._ball_location = 35
-            self._switch_possession()
+            self.kicking = True
             # TODO: Need to restart here, Need the extra point attempt here as well
 
     def _safety_check(self):
@@ -191,7 +191,6 @@ class GameState:
 
     def iterate_down(self):
         if self._down == 4:
-
             self.blue_flag()
         self._down = self._down % 4 + 1
 
@@ -219,7 +218,7 @@ class GameState:
         if dfa == 1:
             print("The half is changing")
             self.set_possession((self._initial + 1) % 2)
-            self._ball_location = 35
+            self.kicking = 1
 
     @property
     def report(self):
