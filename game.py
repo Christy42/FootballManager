@@ -201,6 +201,14 @@ class GameState:
         self._down = 1
 
     @property
+    def ball_position(self):
+        return self._ball_location
+
+    @property
+    def down(self):
+        return self._down
+
+    @property
     def team_1(self):
         return self._team_1
 

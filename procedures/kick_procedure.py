@@ -45,4 +45,19 @@ class Punt(Procedure):
         super().__init__(match)
 
     def step(self):
-        pass
+        print("Punt used")
+        punter = self.match.state.cur_off_players[10][0]
+        returner = self.match.state.cur_def_players[10][0]
+        self.match.state.kicking = False
+        distance = self.match.state.ball_position + round(punter.kicking / 30) + 18 + random.randint(0, 15)
+        print("distance " + str(distance))
+        # TODO: A proper return
+        # TODO: How and when to call this, probably in coin flip and after TDs, Kicks
+        self.match.state.blue_flag()
+        if distance > 100:
+            print("stable")
+            self.match.state.set_ball_loc(80)
+        else:
+            final = distance - round(returner.speed / 500) - random.randint(5, 20)
+            print("return " + str(final))
+            self.match.state.set_ball_loc(final)

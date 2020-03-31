@@ -1,7 +1,7 @@
 from procedures.procedure import Procedure
 from procedures.run_procedure import Run
 from enums import PlayStyle
-from procedures.kick_procedure import KickOff
+from procedures.kick_procedure import KickOff, Punt
 
 
 class EndQuarter(Procedure):
@@ -65,4 +65,7 @@ class RunPlay(Procedure):
         elif self.match.state.cur_off_play.style == PlayStyle.PASS:
             pass
         elif self.match.state.cur_off_play.style == PlayStyle.SPECIAL:
-            KickOff(self.match)
+            if self.match.state.cur_off_play.name == "Kick Off":
+                KickOff(self.match)
+            else:
+                Punt(self.match)

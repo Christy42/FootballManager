@@ -24,6 +24,10 @@ class OffensePlay:
         return self._formation
 
     @property
+    def name(self):
+        return self._name
+
+    @property
     def side(self):
         return self._direction
 
@@ -60,4 +64,13 @@ OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN,
                                          OffensiveAssignments.FADE_LEFT, OffensiveAssignments.FADE_RIGHT,
                                          OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
                                          OffensiveAssignments.KICK], Side.CENTER, 7, 7, "Kick Off", "Kick Off",
-                                        None)}
+                                        None),
+                 "Punt": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
+                                        [OffensiveAssignments.LEFT_BLOCK, OffensiveAssignments.CENTER_BLOCK,
+                                         OffensiveAssignments.CENTER_BLOCK, OffensiveAssignments.CENTER_BLOCK,
+                                         OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.FADE_LEFT,
+                                         OffensiveAssignments.FADE_LEFT, OffensiveAssignments.FADE_RIGHT,
+                                         OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
+                                         OffensiveAssignments.KICK], Side.CENTER, 7, 7, "Punt", "Punt",
+                                        None)
+                 }

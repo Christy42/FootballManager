@@ -69,10 +69,12 @@ class MatchTeam(BaseTeam):
         return self._id
 
     # TODO: Probably add in down/distance stuff but leave for now
-    def choose_play_offense(self, kick=False):
+    def choose_play_offense(self, down, kick=False):
         if kick:
             return OFF_PLAY_LIST["KickOff"]
-        choice = random.choices(list(self._tactics["offense"].keys()), weights=list(self._tactics["offense"].values()))
+        print(self._tactics["offense"])
+        choice = random.choices(list(self._tactics["offense"][down].keys()),
+                                weights=list(self._tactics["offense"][down].values()))
         return OFF_PLAY_LIST[choice[0]]
 
     def choose_play_defense(self):
