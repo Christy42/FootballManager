@@ -18,3 +18,12 @@ def get_pos(cur_list, rota):
         if counter > 1000:
             print("No value possible in {}".format(rota))
             return 0
+
+
+def exp_limited(lower_bound, upper_bound, exp=2):
+    listed_values = [upper_bound]
+    number = 1
+    for i in range(upper_bound-1, lower_bound, -1):
+        number *= exp
+        listed_values += [i] * round(number)
+    return listed_values[randint(0, len(listed_values)-1)]

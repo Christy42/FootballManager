@@ -1,5 +1,6 @@
 import random
 
+from utils import exp_limited
 from procedures.procedure import Procedure
 
 
@@ -21,7 +22,9 @@ class KickOff(Procedure):
             print("stable")
             self.match.state.set_ball_loc(75)
         else:
-            final = distance - round(returner.speed / 500) - random.randint(5, 20)
+            return_dist = max(0, round(returner.speed / 100) + random.randint(5, 20) - 5
+                              if random.random() * 4000 > 3000 + returner.catching else 0)
+            final = distance - return_dist
             print("return " + str(final))
             self.match.state.set_ball_loc(final)
 
@@ -32,12 +35,11 @@ class Kick(Procedure):
 
     def step(self):
         kicker = self.match.state.cur_off_players[0]
-        # TODO: Add potential kick block
-        # TODO: Deal with successful kicks
-        if kicker.kicking > random.random():
-            return 1
-        else:
-            return 0
+        distance = 100 - self.match.state.ball_position + 10 + 5 \
+            if kicker.strength + kicker.kicking <= random.random() * 2000 else 0 + 5 \
+            if kicker.strength + kicker.kicking <= random.random() * 2000 else 0
+        miss_odds = distance * distance + 101 - kicker.kicking
+        return 1 if 10000 - miss_odds > random.random() * 10000 else 0
 
 
 class Punt(Procedure):
@@ -49,15 +51,26 @@ class Punt(Procedure):
         punter = self.match.state.cur_off_players[10][0]
         returner = self.match.state.cur_def_players[10][0]
         self.match.state.kicking = False
-        distance = self.match.state.ball_position + round(punter.kicking / 30) + 18 + random.randint(0, 15)
+        distance = self.match.state.ball_position + round(punter.strength / 40) + 20 + random.randint(0, 15)
         print("distance " + str(distance))
         # TODO: A proper return
         # TODO: How and when to call this, probably in coin flip and after TDs, Kicks
         self.match.state.blue_flag()
         if distance > 100:
             print("stable")
-            self.match.state.set_ball_loc(80)
+            if random.random() * 2000 > 1000 + punter.punt:
+                self.match.state.set_ball_loc(80)
+            else:
+                self.match.state.set_ball_loc(80 + punter.punt / 100 + random.randint(0, 9))
+        elif distance > 90 and random.random() * 2000 > 1000 + punter.punt and \
+                random.random() * 2000 > 1000 + punter.punt + (1000 - punter.punt) / 2:
+            self.match.state.set_ball_loc(distance - 10 + punter.punt / 200 + random.randint(0, 5))
         else:
-            final = distance - round(returner.speed / 500) - random.randint(5, 20)
+            # TODO: Eventually stick in full blocking/ tackling stuff here, if statement is a fumble, could be expanded
+            # TODO: Turning over a turn over could be an issue
+            return_dist = max(0, round(returner.speed / 500) + exp_limited(0, 20, 2 - returner.speed / 2000) - 5
+                              if random.random() * 4000 > 3000 + returner.catching else 0)
+
+            final = distance - return_dist
             print("return " + str(final))
             self.match.state.set_ball_loc(final)
