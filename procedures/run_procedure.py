@@ -68,7 +68,7 @@ class YBCRun(Procedure):
 
     @staticmethod
     def rush_addition(player):
-        return (player.strength + 0.9 * player.rush + 0.1 * player.elusiveness + 0.2 * player.speed) / 2.2
+        return (player.strength + 0.9 * player.rushing + 0.1 * player.elusiveness + 0.2 * player.speed) / 2.2
 
     def blocking(self):
         # TODO: Who is actually involved in each position on this play?

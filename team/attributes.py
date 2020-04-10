@@ -88,8 +88,8 @@ class StaminaAttribute(PhysicalAttribute):
 
 
 class MatchAttributes:
-    def __init__(self, passing, tackling, elusiveness, strength, speed, catching, jumping, vision, fitness, weight,
-                 height, age, optimal_age, coverage, blocking, carrying, route_running, awareness, rush, kicking):
+    def __init__(self, passing, tackling, elusiveness, strength, speed, catching, punt, vision, fitness, weight,
+                 height, age, optimal_age, coverage, blocking, carrying, route_running, awareness, rushing, kicking):
         self._stamina = StaminaAttribute("stamina", fitness, age, optimal_age)
         self._passing = Attribute("passing", passing, age, optimal_age)
         self._catching = Attribute("catching", catching, age, optimal_age)
@@ -100,11 +100,11 @@ class MatchAttributes:
         self._tackling = Attribute("tackling", tackling, age, optimal_age)
         self._awareness = Attribute("awareness", awareness, age, optimal_age)
         self._coverage = Attribute("coverage", coverage, age, optimal_age)
-        self._jumping = PhysicalAttribute("jumping", jumping, age, optimal_age)
+        self._punt = Attribute("punt", punt, age, optimal_age)
         self._strength = PhysicalAttribute("strength", strength, age, optimal_age)
         self._speed = PhysicalAttribute("speed", speed, age, optimal_age)
         self._elusiveness = PhysicalAttribute("elusiveness", elusiveness, age, optimal_age)
-        self._rush = Attribute("rush", rush, age, optimal_age)
+        self._rushing = Attribute("rushing", rushing, age, optimal_age)
         self._kicking = Attribute("kicking", kicking, age, optimal_age)
 
     @property
@@ -112,8 +112,8 @@ class MatchAttributes:
         return self._stamina.value
 
     @property
-    def rush(self):
-        return self._rush.value
+    def rushing(self):
+        return self._rushing.value
 
     @property
     def passing(self):
@@ -156,8 +156,8 @@ class MatchAttributes:
         return self._coverage.value
 
     @property
-    def jumping(self):
-        return self._jumping.value
+    def punt(self):
+        return self._punt.value
 
     @property
     def strength(self):

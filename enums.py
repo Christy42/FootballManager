@@ -160,6 +160,7 @@ class OffensiveAssignments(Enum):
     POST_RIGHT = 23
     QB = 24
     KICK = 25
+    SCAN_BLOCK = 26
 
 
 class DefensiveAssignments(Enum):

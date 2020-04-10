@@ -28,13 +28,13 @@ class PlayerBase:
 
 
 class MatchPlayer(PlayerBase):
-    def __init__(self, passing, tackling, elusiveness, strength, speed, catching, jumping, vision, fitness, weight,
-                 height, age, optimal_age, coverage, blocking, awareness, route_running, carrying, rush, kicking,
+    def __init__(self, passing, tackling, elusiveness, strength, speed, catching, punting, vision, fitness, weight,
+                 height, age, optimal_age, coverage, blocking, awareness, route_running, carrying, rushing, kicking,
                  name, id_no):
         super().__init__(name, id_no)
-        self.attributes = MatchAttributes(passing, tackling, elusiveness, strength, speed, catching, jumping, vision,
+        self.attributes = MatchAttributes(passing, tackling, elusiveness, strength, speed, catching, punting, vision,
                                           fitness, weight, height, age, optimal_age, coverage, blocking,
-                                          carrying, route_running, awareness, rush, kicking)
+                                          carrying, route_running, awareness, rushing, kicking)
 
         self.state = PlayerState()
 
@@ -43,13 +43,21 @@ class MatchPlayer(PlayerBase):
         with open(file_name, "r") as file:
             stats = yaml.safe_load(file)
         return cls(stats["PASSING"], stats["TACKLING"], stats["ELUSIVENESS"], stats["STRENGTH"], stats["SPEED"],
-                   stats["CATCHING"], stats["JUMPING"], stats["VISION"], stats["FITNESS"], stats["WEIGHT"],
+                   stats["CATCHING"], stats["PUNT"], stats["VISION"], stats["FITNESS"], stats["WEIGHT"],
                    stats["HEIGHT"], stats["AGE"], stats["OPTIMAL_AGE"], stats["COVERAGE"], stats["BLOCKING"],
-                   stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["RUSH"], stats["KICK"],
+                   stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["RUSHING"], stats["KICK"],
                    stats["NAME"], stats["ID"])
 
     @property
     def speed(self):
+        return self.attributes.punt
+
+    @property
+    def catching(self):
+        return self.attributes.catching
+
+    @property
+    def punt(self):
         return self.attributes.speed
 
     @property
@@ -77,8 +85,8 @@ class MatchPlayer(PlayerBase):
         return self.attributes.elusiveness
 
     @property
-    def rush(self):
-        return self.attributes.rush
+    def rushing(self):
+        return self.attributes.rushing
 
 
 class PractisePlayer(MatchPlayer):
