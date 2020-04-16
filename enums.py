@@ -139,28 +139,10 @@ class OffensiveAssignments(Enum):
     LEFT_BLOCK = 2
     RIGHT_BLOCK = 3
     CENTER_BLOCK = 4
-    THROWING = 5
-    HITCH_LEFT = 6
-    HITCH_RIGHT = 7
-    TE_HITCH_LEFT = 8
-    TE_HITCH_RIGHT = 9
-    COMEBACK_LEFT = 10
-    COMEBACK_RIGHT = 11
-    CURL_LEFT = 12
-    CURL_RIGHT = 13
-    OUT_LEFT = 14
-    OUT_RIGHT = 15
-    DIG_LEFT = 16
-    DIG_RIGHT = 17
-    SLANT_LEFT = 18
-    SLANT_RIGHT = 19
-    FADE_RIGHT = 20
-    FADE_LEFT = 21
-    POST_LEFT = 22
-    POST_RIGHT = 23
-    QB = 24
-    KICK = 25
-    SCAN_BLOCK = 26
+    ROUTE_RUNNING = 5
+    QB = 6
+    KICK = 7
+    SCAN_BLOCK = 8
 
 
 class DefensiveAssignments(Enum):
@@ -182,3 +164,26 @@ class DefensiveAssignments(Enum):
     LONG_LEFT_COVER = 16
     LONG_CENTER_COVER = 17
     LONG_RIGHT_COVER = 18
+
+
+class FieldPoints(Enum):  # All done from offense point of view
+    BACK_RIGHT = 1
+    BACK_CENTER = 2
+    BACK_LEFT = 3
+    SHORT_RIGHT = 4
+    SHORT_CENTER = 5
+    SHORT_LEFT = 6
+    MID_RIGHT = 7
+    MID_CENTER = 8
+    MID_LEFT = 9
+    LONG_RIGHT = 10
+    LONG_CENTER = 11
+    LONG_LEFT = 12
+
+
+class Receivers(Enum):
+    REC1 = 1
+    REC2 = 2
+    REC3 = 3
+    REC4 = 4
+    REC5 = 5

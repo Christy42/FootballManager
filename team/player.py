@@ -30,12 +30,11 @@ class PlayerBase:
 class MatchPlayer(PlayerBase):
     def __init__(self, passing, tackling, elusiveness, strength, speed, catching, punting, vision, fitness, weight,
                  height, age, optimal_age, coverage, blocking, awareness, route_running, carrying, rushing, kicking,
-                 name, id_no):
+                 burst, name, id_no):
         super().__init__(name, id_no)
         self.attributes = MatchAttributes(passing, tackling, elusiveness, strength, speed, catching, punting, vision,
-                                          fitness, weight, height, age, optimal_age, coverage, blocking,
+                                          fitness, weight, burst, height, age, optimal_age, coverage, blocking,
                                           carrying, route_running, awareness, rushing, kicking)
-
         self.state = PlayerState()
 
     @classmethod
@@ -46,7 +45,7 @@ class MatchPlayer(PlayerBase):
                    stats["CATCHING"], stats["PUNT"], stats["VISION"], stats["FITNESS"], stats["WEIGHT"],
                    stats["HEIGHT"], stats["AGE"], stats["OPTIMAL_AGE"], stats["COVERAGE"], stats["BLOCKING"],
                    stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["RUSHING"], stats["KICK"],
-                   stats["NAME"], stats["ID"])
+                   stats["BURST"], stats["NAME"], stats["ID"])
 
     @property
     def speed(self):

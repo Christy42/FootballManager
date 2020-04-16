@@ -1,3 +1,4 @@
+from copy import deepcopy
 from random import randint, choices
 
 
@@ -6,6 +7,16 @@ def repeated_randint(low, high, rolls):
     for i in range(rolls):
         total += randint(low, high)
     return int(total / rolls)
+
+
+def combine_values(listed, weights=(10, 8, 6, 4, 3, 2, 1, 1, 1, 1, 1)):
+    sum_value = sum(weights)
+    copy_list = deepcopy(listed)
+    new_list = []
+    for i in range(len(listed)):
+        new_list.append(max(copy_list) * weights[i] / sum_value)
+        copy_list.remove(max(copy_list))
+    return sum(new_list)
 
 
 def get_pos(cur_list, rota):

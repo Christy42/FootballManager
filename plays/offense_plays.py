@@ -1,13 +1,14 @@
 from enums import OffenseFormation, PlayStyle, Side, OffensiveAssignments, RunStyle
 from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM, KICK_OFF
-
+from plays.route import DRIVE_SINGLEBACK
 
 # Ordering (changes slightly depending on formation, RB, TEs go in for later WRs
 # OT, OG, C, OG, OT, WR1, WR2, WR3, WR4, RB1, QB
 # OT, OG, C, OG, OT, WR1, WR2, WR3, RB1, TE1, QB
 # K ......
 class OffensePlay:
-    def __init__(self, formation, style, assignments, direction, runner, primary, name, com_name, block_style):
+    def __init__(self, formation, style, assignments, direction, runner, primary, name, com_name, block_style,
+                 route=None):
         self._assignments = assignments
         self._direction = direction
         self._runner = 0
@@ -18,6 +19,7 @@ class OffensePlay:
         self._runner = runner
         self._style = style
         self._block_style = block_style
+        self._route = route
 
     @property
     def formation(self):
