@@ -62,6 +62,7 @@ class GameState:
         self._team_1 = team_1
         self._team_2 = team_2
         self._time = GameTime()
+        self._qb_time = 0
         self._team_1_pace = 25
         self._team_2_pace = 25
         self._down = 1
@@ -76,6 +77,13 @@ class GameState:
         self.cur_off_players = []
         self.cur_def_players = []
         self.kicking = False
+
+    def set_qb_time(self, value):
+        self._qb_time = value
+
+    @property
+    def qb_time(self):
+        return self._qb_time
 
     def set_ball_loc(self, placement):
         self._ball_location = placement

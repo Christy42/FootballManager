@@ -21,71 +21,64 @@ class PassBlock(Procedure):
         scan_blocks = self._scan(block_values, rush_values)
         times = self._time_calculation(scan_blocks, rush_values)
         qb_adj = self._qb_run(times)
+        self.match.state.set_qb_time(min(qb_adj.values()))
         # TODO: Need to return these times somewhere going forward
 
-    def _blocks(self):
-        left_block = []
-        right_block = []
-        center_block = []
-        for i in range(self.match.state.cur_off_assignments):
-            player = self.match.state.cur_off_players[i]
-            if self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.LEFT_BLOCK:
-                left_block.append((player.block * 6 + 3 * player.strength + player.positioning) /
-                                  (10 + 3 if random.random() > 0.8 else 0 - 3 if random.random() < 0.3 else 0 +
-                                   0.5 if random.random() > 0.95 else 0 - 0.5 if random.random() < 0.05 else 0))
-            if self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.CENTER_BLOCK:
-                pass
-            if self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.RIGHT_BLOCK:
-                pass
-        left_value = combine_values(left_block)
-        right_value = combine_values(right_block)
-        center_value = combine_values(center_block)
-        return {Side.LEFT: left_value, Side.CENTER: center_value, Side.RIGHT: right_value}
+    def _blocks(self) -> dict:
+        blocks = {OffensiveAssignments.LEFT_BLOCK: [], OffensiveAssignments.CENTER_BLOCK: [],
+                  OffensiveAssignments.RIGHT_BLOCK: []}
+        for side in [OffensiveAssignments.LEFT_BLOCK,
+                     OffensiveAssignments.CENTER_BLOCK, OffensiveAssignments.RIGHT_BLOCK]:
+            for i in range(self.match.state.cur_off_assignments):
+                player = self.match.state.cur_off_players[i]
+                if self.match.state.cur_off_play.assignments[i] == side:
+                    blocks[side].append((player.block * 6 * player.burst / 1000 + 3 * player.strength +
+                                         player.positioning * player.burst / 1000) /
+                                        (13 + 5 if random.random() > 0.9 else 0 - 5 if random.random() < 0.1 else 0 +
+                                         0.5 if random.random() > 0.95 else 0 - 0.5 if random.random() < 0.05 else 0))
 
-    def _rush(self):
-        left_rush = []
-        right_rush = []
-        center_rush = []
-        for i in range(self.match.state.cur_def_assignments):
-            if self.match.state.cur_off_play.assignments[i] == DefensiveAssignments.LEFT_RUSH:
-                left_rush.append(self.match.state.cur_off_players[i].rush)
-            if self.match.state.cur_off_play.assignments[i] == DefensiveAssignments.CENTER_RUSH:
-                center_rush.append(self.match.state.cur_off_players[i].rush)
-            if self.match.state.cur_off_play.assignments[i] == DefensiveAssignments.RIGHT_RUSH:
-                right_rush.append(self.match.state.cur_off_players[i].rush)
-        left_value = combine_values(left_rush)
-        right_value = combine_values(right_rush)
-        center_value = combine_values(center_rush)
-        return {Side.LEFT: left_value, Side.CENTER: center_value, Side.RIGHT: right_value}
+        return {Side.LEFT: combine_values(blocks[OffensiveAssignments.LEFT_BLOCK]),
+                Side.CENTER: combine_values(blocks[OffensiveAssignments.CENTER_BLOCK]),
+                Side.RIGHT: combine_values(blocks[OffensiveAssignments.RIGHT_BLOCK])}
 
-    def _scan(self, block, rush):
+    def _rush(self) -> dict:
+        rushes = {DefensiveAssignments.LEFT_RUSH: [], DefensiveAssignments.CENTER_BLOCK: [],
+                  DefensiveAssignments.RIGHT_BLOCK: []}
+        for side in [DefensiveAssignments.LEFT_RUSH,
+                     DefensiveAssignments.CENTER_RUSH, DefensiveAssignments.RIGHT_RUSH]:
+            for i in range(self.match.state.cur_def_assignments):
+                player = self.match.state.cur_def_players[i]
+                if self.match.state.cur_off_play.assignments[i] == side:
+                    rushes[side].append((player.rush * 6 * player.burst / 1000 + 3 * player.strength +
+                                         player.speed * player.burst / 1000) /
+                                        (13 + 5 if random.random() > 0.9 else 0 - 5 if random.random() < 0.1 else 0 +
+                                         0.5 if random.random() > 0.95 else 0 - 0.5 if random.random() < 0.05 else 0))
+        return {Side.LEFT: combine_values(rushes[DefensiveAssignments.LEFT_RUSH]),
+                Side.CENTER: combine_values(rushes[DefensiveAssignments.CENTER_RUSH]),
+                Side.RIGHT: combine_values(rushes[DefensiveAssignments.RIGHT_RUSH])}
+
+    def _scan(self, block, rush) -> dict:
+        effect = [rush[j] / block[j] for j in [Side.LEFT, Side.CENTER, Side.RIGHT]]
+        vision_scan = Side.LEFT if effect[0] == max(effect) else Side.CENTER if effect[1] == max(effect) else Side.Right
+
         for i in range(self.match.state.cur_off_assignments):
             if self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.SCAN_BLOCK:
-                if rush[Side.LEFT] / block[Side.LEFT] > \
-                        max(rush[Side.CENTER] / block[Side.CENTER], rush[Side.RIGHT] / block[Side.RIGHT]):
-                    pass
-                elif rush[Side.RIGHT] / block[Side.RIGHT] > \
-                        max(rush[Side.CENTER] / block[Side.CENTER], rush[Side.LEFT] / block[Side.LEFT]):
-                    pass
-                elif rush[Side.CENTER] / block[Side.CENTER] > \
-                        max(rush[Side.RIGHT] / block[Side.RIGHT], rush[Side.LEFT] / block[Side.LEFT]):
-                    pass
+                player = self.match.state.cur_def_players[i]
+                block[vision_scan] += (player.vision * player.block * player.positioning / 6000000 +
+                                       player.strength * player.positioning / 6000) if random() * 2000 < \
+                                       500 + player.vision else 0
         return {Side.LEFT: block[Side.LEFT], Side.CENTER: block[Side.CENTER], Side.RIGHT: block[Side.RIGHT]}
 
     @staticmethod
-    def _time_calculation(blocks, rushes):
+    def _time_calculation(blocks, rushes) -> dict:
         return {Side.LEFT: 1, Side.CENTER: 2, Side.RIGHT: 3}
 
     @staticmethod
-    def _qb_run(times):
+    def _qb_run(times) -> dict:
         # TODO:  Add on extra QB mobility time here
-        if min(times[Side.LEFT], times[Side.CENTER]) > times[Side.RIGHT]:
-            pass
-        elif min(times[Side.RIGHT], times[Side.CENTER]) > times[Side.LEFT]:
-            pass
-        elif max(times[Side.RIGHT], times[Side.LEFT]) > times[Side.CENTER]:
-            pass
-        return {Side.LEFT: 1, Side.CENTER: 2, Side.RIGHT: 3}
+        scan = max(times, key=times.get)
+        new_times = {x: times[x] for x in times}
+        return {Side.LEFT: new_times[Side.LEFT], Side.CENTER: new_times[Side.LEFT], Side.RIGHT: new_times[Side.LEFT]}
 
 
 class Pass(Procedure):
