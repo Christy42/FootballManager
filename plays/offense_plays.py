@@ -1,4 +1,4 @@
-from enums import OffenseFormation, PlayStyle, Side, OffensiveAssignments, RunStyle
+from enums import OffenseFormation, PlayStyle, Side, OffensiveAssignments, RunStyle, GenericOff
 from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM, KICK_OFF
 from plays.route import DRIVE_SINGLEBACK
 
@@ -6,13 +6,18 @@ from plays.route import DRIVE_SINGLEBACK
 # OT, OG, C, OG, OT, WR1, WR2, WR3, WR4, RB1, QB
 # OT, OG, C, OG, OT, WR1, WR2, WR3, RB1, TE1, QB
 # K ......
+
+
 class OffensePlay:
-    def __init__(self, formation, style, assignments, direction, runner, primary, name, com_name, block_style,
-                 route=None):
-        self._assignments = assignments
+    def __init__(self, formation, style, assignments, direction, runner, name, com_name, block_style, route=None):
+        self._assignments = {GenericOff.OT_L: assignments[0], GenericOff.OG_L: assignments[1],
+                             GenericOff.C: assignments[2], GenericOff.OG_R: assignments[3],
+                             GenericOff.OT_R: assignments[4], GenericOff.REC1: assignments[5],
+                             GenericOff.REC2: assignments[6], GenericOff.REC3: assignments[7],
+                             GenericOff.REC4: assignments[8], GenericOff.REC5: assignments[9],
+                             GenericOff.QB: assignments[10]}
         self._direction = direction
         self._runner = 0
-        self._primary = primary
         self._formation = formation
         self._name = name
         self._commentary_name = com_name
@@ -49,38 +54,47 @@ class OffensePlay:
     def block_style(self):
         return self._block_style
 
+# This system of assigning players on a list seems badly thought out.  OL_1->OL_5 maybe???
+# Or just have blocking style fill it all in really?  I guess some routes will have blocking info but just go through
+# Seems much much cleaner.  Even if there is only one or two blocking styles.  Think on it
+
 
 OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN,
+                                             [OffensiveAssignments.LEFT_BLOCK, OffensiveAssignments.CENTER_BLOCK,
+                                              OffensiveAssignments.CENTER_BLOCK, OffensiveAssignments.CENTER_BLOCK,
+                                              OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.ROUTE_RUNNING,
+                                              OffensiveAssignments.ROUTE_RUNNING, OffensiveAssignments.ROUTE_RUNNING,
+                                              OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
+                                              OffensiveAssignments.QB], Side.CENTER, GenericOff.REC4, "Man Center Run",
+                                             "Man Center Run", RunStyle.MAN),
+                 "DriveSingleback": OffensePlay(SINGLEBACK, PlayStyle.PASS,
                                          [OffensiveAssignments.LEFT_BLOCK, OffensiveAssignments.CENTER_BLOCK,
                                           OffensiveAssignments.CENTER_BLOCK, OffensiveAssignments.CENTER_BLOCK,
-                                          OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.FADE_LEFT,
-                                          OffensiveAssignments.FADE_LEFT, OffensiveAssignments.FADE_RIGHT,
-                                          OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
-                                          OffensiveAssignments.QB],
-                                          Side.CENTER, 7, 7, "Man Center Run",
-                                          "Man Center Run", RunStyle.MAN),
+                                          OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.ROUTE_RUNNING,
+                                          OffensiveAssignments.ROUTE_RUNNING, OffensiveAssignments.ROUTE_RUNNING,
+                                          OffensiveAssignments.SCAN_BLOCK, OffensiveAssignments.ROUTE_RUNNING,
+                                          OffensiveAssignments.QB], Side.CENTER, GenericOff.REC4, "Man Center Run",
+                                                "Man Center Run", RunStyle.MAN, route=DRIVE_SINGLEBACK),
                  "KickOff": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
                                         [OffensiveAssignments.LEFT_BLOCK, OffensiveAssignments.CENTER_BLOCK,
                                          OffensiveAssignments.CENTER_BLOCK, OffensiveAssignments.CENTER_BLOCK,
-                                         OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.FADE_LEFT,
-                                         OffensiveAssignments.FADE_LEFT, OffensiveAssignments.FADE_RIGHT,
+                                         OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.ROUTE_RUNNING,
+                                         OffensiveAssignments.ROUTE_RUNNING, OffensiveAssignments.ROUTE_RUNNING,
                                          OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
-                                         OffensiveAssignments.KICK], Side.CENTER, 7, 7, "Kick Off", "Kick Off",
-                                        None),
+                                         OffensiveAssignments.KICK], Side.CENTER, GenericOff.REC4, "Kick Off",
+                                        "Kick Off", None),
                  "Kick": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
                                      [OffensiveAssignments.LEFT_BLOCK, OffensiveAssignments.CENTER_BLOCK,
                                       OffensiveAssignments.CENTER_BLOCK, OffensiveAssignments.CENTER_BLOCK,
-                                      OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.FADE_LEFT,
-                                      OffensiveAssignments.FADE_LEFT, OffensiveAssignments.FADE_RIGHT,
+                                      OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.ROUTE_RUNNING,
+                                      OffensiveAssignments.ROUTE_RUNNING, OffensiveAssignments.ROUTE_RUNNING,
                                       OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
-                                      OffensiveAssignments.KICK], Side.CENTER, 7, 7, "Kick", "Kick",
-                                     None),
+                                      OffensiveAssignments.KICK], Side.CENTER, GenericOff.REC4, "Kick", "Kick", None),
                  "Punt": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
                                      [OffensiveAssignments.LEFT_BLOCK, OffensiveAssignments.CENTER_BLOCK,
                                       OffensiveAssignments.CENTER_BLOCK, OffensiveAssignments.CENTER_BLOCK,
-                                      OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.FADE_LEFT,
-                                      OffensiveAssignments.FADE_LEFT, OffensiveAssignments.FADE_RIGHT,
+                                      OffensiveAssignments.RIGHT_BLOCK, OffensiveAssignments.ROUTE_RUNNING,
+                                      OffensiveAssignments.ROUTE_RUNNING, OffensiveAssignments.ROUTE_RUNNING,
                                       OffensiveAssignments.RUNNING, OffensiveAssignments.RIGHT_BLOCK,
-                                      OffensiveAssignments.KICK], Side.CENTER, 7, 7, "Punt", "Punt",
-                                     None)
+                                      OffensiveAssignments.KICK], Side.CENTER, GenericOff.REC4, "Punt", "Punt", None)
                  }

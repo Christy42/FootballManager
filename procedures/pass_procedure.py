@@ -8,6 +8,19 @@ class RouteRun(Procedure):
         super().__init__(match)
 
     def step(self):
+        # Needs where the players are targeting really.
+        # Take the final target by themselves.  Combine the rest a bit.
+        # Work out check_down
+        for i in range(len(self.match.state.cur_off_play.route.reads)):
+            # Main route run
+            for j in range(len(self.match.state.cur_off_play.route.reads)):
+                if i != j:
+                    # helping out
+                    # Now I need to go from REC1 to Julio Jones or whoever
+                    pass
+        # Receiver 1-> some help from 2 and maybe 3
+        # Receiver 2, some help from 1 and maybe 3
+        # Receiver 3, some help from 1 and 2
         pass
 
 

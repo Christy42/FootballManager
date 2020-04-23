@@ -2,6 +2,7 @@ import random
 
 from utils import exp_limited
 from procedures.procedure import Procedure
+from enums import GenericOff
 
 
 class KickOff(Procedure):
@@ -10,7 +11,7 @@ class KickOff(Procedure):
 
     def step(self):
         print(len(self.match.state.cur_off_players))
-        kicker = self.match.state.cur_off_players[10][0]
+        kicker = self.match.state.cur_off_players[GenericOff.QB][0]
         returner = self.match.state.cur_def_players[10][0]
         self.match.state.kicking = False
         distance = round(kicker.kicking / 30) + 60 + random.randint(0, 30)

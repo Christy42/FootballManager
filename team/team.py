@@ -2,10 +2,12 @@ import yaml
 import random
 
 from utils import get_pos
-from enums import OffenseFormation, DefenseFormation, Position
+from enums import OffenseFormation, DefenseFormation, Position, GenericOff
 from team.player import MatchPlayer
 from plays.defense_plays import DEF_PLAY_LIST
 from plays.offense_plays import OFF_PLAY_LIST
+from plays import defense_formation as df
+from plays import offense_formation as of
 
 
 class BaseTeam:
@@ -81,10 +83,11 @@ class MatchTeam(BaseTeam):
         choice = random.choices(list(self._tactics["defense"].keys()), weights=list(self._tactics["defense"].values()))
         return DEF_PLAY_LIST[choice[0]]
 
-    def choose_offense(self, formation):
+    def choose_offense(self, formation: of.OffenseFormation):
         # how are we ordering this.  Kind of want to do the optional stuff first.  Still just assuming it works
         # which is bad.  Soooo lets go with FB, SLOT2, TE2, SLOT1, TE1, RB1, WR1, WR2, OT1, OT2, OG1, OG2, C, QB
         # Then order like OT, OG, C, OG, OT, WR1, WR2, WR3, WR4, RB1, QB
+        # Maybe go with the REC1 REC2 things etc.
         # TODO: Kicking
         # Need to assure no duplicates
         # While True is emulating a do loop
@@ -123,14 +126,16 @@ class MatchTeam(BaseTeam):
         c = get_pos(cur_list, self._pos_rota[Position.C])
         cur_list.append(c)
         qb = get_pos(cur_list, self._pos_rota[Position.QB]) if formation.no_k < 1 else None
-        cur_list.append(qb)
         # Should eventually be a class really instead of relying on numbers.
         players = [ot2, og2, c, og1, ot1, wr1, wr2, wr3, wr4, rb, fb, te, te2, gnr1, gnr2, qb, k]
-        print(players)
-        return [x for x in players if x is not None]
+        plyrs = [x for x in players if x is not None]
+        return {GenericOff.OT_L: plyrs[0], GenericOff.OG_L: plyrs[1], GenericOff.C: plyrs[2], GenericOff.OG_R: plyrs[3],
+                GenericOff.OT_R: plyrs[4], GenericOff.REC1: plyrs[5], GenericOff.REC2: plyrs[6],
+                GenericOff.REC3: plyrs[7], GenericOff.REC4: plyrs[8], GenericOff.REC5: plyrs[9],
+                GenericOff.QB: plyrs[10]}
 
     # ordering of DE1, DT1, DT2, DE2, MLB1, MLB2, OLB1, OLB2, NICKEL, DIME, CB1, CB2, SF1, SF2 as appropriate
-    def choose_defense(self, formation):
+    def choose_defense(self, formation: df.DefenseFormation) -> list:
         cur_list = []
         dime = get_pos(cur_list, self._pos_rota[Position.DIME]) if formation.no_cb > 3 else None
         cur_list.append(dime)

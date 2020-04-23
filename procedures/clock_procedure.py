@@ -1,5 +1,6 @@
 from procedures.procedure import Procedure
 from procedures.run_procedure import Run
+from procedures.pass_procedure import Pass
 from enums import PlayStyle
 from procedures.kick_procedure import KickOff, Punt, Kick
 
@@ -63,7 +64,7 @@ class RunPlay(Procedure):
         if self.match.state.cur_off_play.style == PlayStyle.RUN:
             Run(self.match)
         elif self.match.state.cur_off_play.style == PlayStyle.PASS:
-            pass
+            Pass(self.match)
         elif self.match.state.cur_off_play.style == PlayStyle.SPECIAL:
             if self.match.state.cur_off_play.name == "Kick Off":
                 KickOff(self.match)

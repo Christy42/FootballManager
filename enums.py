@@ -167,23 +167,48 @@ class DefensiveAssignments(Enum):
 
 
 class FieldPoints(Enum):  # All done from offense point of view
+    # Back -5 -> 0, SHORT 1 -> 5, MID 6 -> 10, LONG 11 -> 15, FAR 16 -> 20, DEEP -> 21 - 25
     BACK_RIGHT = 1
-    BACK_CENTER = 2
-    BACK_LEFT = 3
-    SHORT_RIGHT = 4
-    SHORT_CENTER = 5
-    SHORT_LEFT = 6
-    MID_RIGHT = 7
-    MID_CENTER = 8
-    MID_LEFT = 9
-    LONG_RIGHT = 10
-    LONG_CENTER = 11
-    LONG_LEFT = 12
+    BACK_CENT_R = 2
+    BACK_CENTER = 3
+    BACK_CENT_L = 4
+    BACK_LEFT = 5
+    SHORT_RIGHT = 6
+    SHORT_CENT_R = 7
+    SHORT_CENTER = 8
+    SHORT_CENT_L = 9
+    SHORT_LEFT = 10
+    MID_RIGHT = 11
+    MID_CENT_R = 12
+    MID_CENTER = 13
+    MID_CENT_L = 14
+    MID_LEFT = 15
+    LONG_RIGHT = 16
+    LONG_CENT_R = 17
+    LONG_CENTER = 18
+    LONG_CENT_L = 19
+    LONG_LEFT = 20
+    FAR_RIGHT = 16
+    FAR_CENT_R = 17
+    FAR_CENTER = 18
+    FAR_CENT_L = 19
+    FAR_LEFT = 20
+    DEEP_RIGHT = 21
+    DEEP_CENT_R = 22
+    DEEP_CENTER = 23
+    DEEP_CENT_L = 24
+    DEEP_LEFT = 25
 
 
-class Receivers(Enum):
+class GenericOff(Enum):
     REC1 = 1
     REC2 = 2
     REC3 = 3
     REC4 = 4
     REC5 = 5
+    OT_L = 6
+    OG_L = 7
+    C = 8
+    OG_R = 9
+    OT_R = 10
+    QB = 11

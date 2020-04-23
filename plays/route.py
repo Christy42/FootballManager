@@ -1,23 +1,18 @@
-from enums import FieldPoints, Receivers
+from enums import FieldPoints, GenericOff, OffensiveAssignments
 
 
 class RouteRead:
-    def __init__(self, name, read_1, read_2, read_3, reads, read_1_attack,
-                 read_2_attack, read_3_attack, check_down, check_down_attack, closed, man):
+    def __init__(self, name, reads, assignments, check_down):
         # Need to read these into offensive play
         # Works differently
-        self._read_1 = read_1
-        self._read_2 = read_2
-        self._read_3 = read_3
         self._check_down = check_down
         self._name = name
         self._reads = reads
-        self._read_1_attack = read_1_attack
-        self._read_2_attack = read_2_attack
-        self._read_3_attack = read_3_attack
-        self._check_down_attack = check_down_attack
-        self._closed = closed
-        self._man = man
+        self._assignments = assignments
+
+    @property
+    def reads(self):
+        return self._reads
 
 
 class Route:
@@ -28,10 +23,11 @@ class Route:
         self._route_open_zone = route_open_zone
 
 
-# How to deal with players and not use numbers?  Need something else or I will get mixed up
-_DRIVE_MAN = RouteRead("Drive", Receivers.REC2, Receivers.REC1, Receivers.REC4, Receivers.REC5, 3,
-                       FieldPoints.MID_LEFT, FieldPoints.SHORT_LEFT, FieldPoints.MID_CENTER,
-                       FieldPoints.SHORT_RIGHT, True, True)
+# How to deal with players and not use numbers?  Need something else or I will get mixed up.  # Need to include blocking
+_DRIVE_MAN = RouteRead("Drive", [GenericOff.REC2, GenericOff.REC1, GenericOff.REC4], GenericOff.REC5,
+                       {GenericOff.REC2: FieldPoints.MID_LEFT, GenericOff.REC1: FieldPoints.SHORT_LEFT,
+                        GenericOff.REC4: FieldPoints.MID_CENTER, GenericOff.REC5: FieldPoints.SHORT_RIGHT,
+                        GenericOff.REC3: OffensiveAssignments.RIGHT_BLOCK})
 
 DRIVE_SINGLEBACK = Route(_DRIVE_MAN, _DRIVE_MAN, _DRIVE_MAN, _DRIVE_MAN)
 

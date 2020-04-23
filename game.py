@@ -3,7 +3,7 @@ import math
 from random import randint, choices
 
 from stack import Stack
-from enums import Possession, PlayStyle, Position
+from enums import Possession, PlayStyle, Position, GenericOff
 from team.team import MatchTeam
 from procedures.total_play import FullPlay
 
@@ -74,7 +74,7 @@ class GameState:
         self.cur_def_play = None
         self.tackler = 0
         self._initial = None
-        self.cur_off_players = []
+        self.cur_off_players = {}
         self.cur_def_players = []
         self.kicking = False
 
@@ -139,6 +139,7 @@ class GameState:
             self.iterate_down()
         self._temp_yards = 0
         self.tackler = 0
+        self._qb_time = 0
 
     def end_play_checks(self):
         self.flush_temp_yards()
