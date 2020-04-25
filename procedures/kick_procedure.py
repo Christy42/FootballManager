@@ -49,7 +49,7 @@ class Punt(Procedure):
 
     def step(self):
         print("Punt used")
-        punter = self.match.state.cur_off_players[10][0]
+        punter = self.match.state.cur_off_players[GenericOff.QB][0]
         returner = self.match.state.cur_def_players[10][0]
         self.match.state.kicking = False
         distance = self.match.state.ball_position + round(punter.strength / 40) + 20 + random.randint(0, 15)

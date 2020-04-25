@@ -2,7 +2,7 @@ from random import choice
 
 from procedures.tackling_procedures import Tackling
 from procedures.procedure import Procedure
-from enums import GenericOff, RunStyle, OffensiveAssignments, DefensiveAssignments, PlayStyle, Side
+from enums import GenericOff, RunStyle, OffAssignments, DefensiveAssignments, PlayStyle, Side
 
 
 # TODO: What types of run are there?  How do they differ.  Probably don't need new ones for each side
@@ -74,23 +74,23 @@ class YBCRun(Procedure):
         # TODO: Who is actually involved in each position on this play?
         # Left blocking
         for i in GenericOff:
-            if self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.LEFT_BLOCK:
+            if self.match.state.cur_off_play.assignments[i] == OffAssignments.LEFT_BLOCK:
                 self._left_block += 0.9 * self.block_addition(self.match.state.cur_off_players[i][0])
-            elif self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.CENTER_BLOCK:
+            elif self.match.state.cur_off_play.assignments[i] == OffAssignments.CENTER_BLOCK:
                 self._left_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
         # Right blocking
         for i in GenericOff:
-            if self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.RIGHT_BLOCK:
+            if self.match.state.cur_off_play.assignments[i] == OffAssignments.RIGHT_BLOCK:
                 self._right_block += 0.9 * self.block_addition(self.match.state.cur_off_players[i][0])
-            elif self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.CENTER_BLOCK:
+            elif self.match.state.cur_off_play.assignments[i] == OffAssignments.CENTER_BLOCK:
                 self._right_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
         # Center blocking
         for i in GenericOff:
-            if self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.CENTER_BLOCK:
+            if self.match.state.cur_off_play.assignments[i] == OffAssignments.CENTER_BLOCK:
                 self._center_block += 0.8 * self.block_addition(self.match.state.cur_off_players[i][0])
-            elif self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.RIGHT_BLOCK:
+            elif self.match.state.cur_off_play.assignments[i] == OffAssignments.RIGHT_BLOCK:
                 self._center_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
-            elif self.match.state.cur_off_play.assignments[i] == OffensiveAssignments.LEFT_BLOCK:
+            elif self.match.state.cur_off_play.assignments[i] == OffAssignments.LEFT_BLOCK:
                 self._center_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
 
     def form_adjustment(self, i):

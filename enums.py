@@ -134,7 +134,7 @@ class Attribute(Enum):
     RUSHING = 22
 
 
-class OffensiveAssignments(Enum):
+class OffAssignments(Enum):
     RUNNING = 1
     LEFT_BLOCK = 2
     RIGHT_BLOCK = 3

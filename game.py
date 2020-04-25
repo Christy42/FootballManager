@@ -66,6 +66,8 @@ class GameState:
         self._team_1_pace = 25
         self._team_2_pace = 25
         self._down = 1
+        self.routes_ran = {GenericOff.REC1: 0, GenericOff.REC4: 0, GenericOff.REC3: 0, GenericOff.REC2: 0,
+                           GenericOff.REC5: 0}
         self._turnover = 0
         self._temp_yards = 0
         self._outcome = None
@@ -88,19 +90,19 @@ class GameState:
     def set_ball_loc(self, placement):
         self._ball_location = placement
 
-    def set_players(self):
+    #def set_players(self):
         # Offense
-        for position in [Position.OT, Position.OG, Position.C, Position.WR, Position.TE, Position.FB, Position.QB,
-                         Position.P, Position.K, Position.G]:
-            for i in range(self.cur_off_play.formation.positions[position]):
-                self.cur_off_players.append(choices(self.offense.players[position],
-                                                    self.offense.player_weights[position])[0])
+    #    for position in [Position.OT, Position.OG, Position.C, Position.WR, Position.TE, Position.FB, Position.QB,
+     #                    Position.P, Position.K, Position.G]:
+      #      for i in range(self.cur_off_play.formation.positions[position]):
+       #         self.cur_off_players.append(choices(self.offense.players[position],
+        #                                            self.offense.player_weights[position])[0])
 
-        for position in [Position.DE, Position.DT, Position.OLB, Position.MLB, Position.CB, Position.S, Position.N,
-                         Position.KR, Position.PR]:
-            for i in range(self.cur_def_play.formation.positions[position]):
-                self.cur_def_players.append(choices(self.defense.players[position],
-                                                    self.defense.player_weights[position])[0])
+        #for position in [Position.DE, Position.DT, Position.OLB, Position.MLB, Position.CB, Position.S, Position.N,
+        #                 Position.KR, Position.PR]:
+        #    for i in range(self.cur_def_play.formation.positions[position]):
+        #        self.cur_def_players.append(choices(self.defense.players[position],
+         #                                           self.defense.player_weights[position])[0])
 
     def set_comm_values(self, outcome=None):
         self._outcome = outcome
@@ -140,6 +142,8 @@ class GameState:
         self._temp_yards = 0
         self.tackler = 0
         self._qb_time = 0
+        self.routes_ran = {GenericOff.REC1: 0, GenericOff.REC4: 0, GenericOff.REC3: 0, GenericOff.REC2: 0,
+                           GenericOff.REC5: 0}
 
     def end_play_checks(self):
         self.flush_temp_yards()

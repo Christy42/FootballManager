@@ -1,5 +1,5 @@
 from copy import deepcopy
-from random import randint, choices
+from random import randint, choices, random
 
 
 def repeated_randint(low, high, rolls):
@@ -7,6 +7,13 @@ def repeated_randint(low, high, rolls):
     for i in range(rolls):
         total += randint(low, high)
     return int(total / rolls)
+
+
+def repeated_random(number: int, odds: float) -> int:
+    total = 0
+    for i in range(number):
+        total = total + 1 if random() > odds else 0
+    return total
 
 
 def combine_values(listed, weights=(10, 8, 6, 4, 3, 2, 1, 1, 1, 1, 1)):
