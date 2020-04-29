@@ -100,8 +100,19 @@ class PlayStyle(Enum):
 
 class Side(Enum):
     LEFT = 1
-    RIGHT = 2
+    CENT_L = 2
     CENTER = 3
+    CENT_R = 4
+    RIGHT = 5
+
+
+class Depth(Enum):
+    BACK = 1
+    SHORT = 2
+    MID = 3
+    LONG = 4
+    FAR = 5
+    DEEP = 6
 
 
 class RunStyle(Enum):
@@ -134,7 +145,7 @@ class Attribute(Enum):
     RUSHING = 22
 
 
-class OffAssignments(Enum):
+class OffAssign(Enum):
     RUNNING = 1
     LEFT_BLOCK = 2
     RIGHT_BLOCK = 3
@@ -145,62 +156,7 @@ class OffAssignments(Enum):
     SCAN_BLOCK = 8
 
 
-class DefensiveAssignments(Enum):
-    CENTER_RUSH = 1
-    LEFT_RUSH = 2
-    RIGHT_RUSH = 3
-    MAN_1 = 4
-    MAN_2 = 5
-    MAN_3 = 6
-    MAN_4 = 7
-    MAN_5 = 8
-    MAN_6 = 9  # Spy on the QB
-    SHORT_LEFT_COVER = 10
-    SHORT_CENTER_COVER = 11
-    SHORT_RIGHT_COVER = 12
-    MIDDLE_LEFT_COVER = 13
-    MIDDLE_CENTER_COVER = 14
-    MIDDLE_RIGHT_COVER = 15
-    LONG_LEFT_COVER = 16
-    LONG_CENTER_COVER = 17
-    LONG_RIGHT_COVER = 18
-
-
-class FieldPoints(Enum):  # All done from offense point of view
-    # Back -5 -> 0, SHORT 1 -> 5, MID 6 -> 10, LONG 11 -> 15, FAR 16 -> 20, DEEP -> 21 - 25
-    BACK_RIGHT = 1
-    BACK_CENT_R = 2
-    BACK_CENTER = 3
-    BACK_CENT_L = 4
-    BACK_LEFT = 5
-    SHORT_RIGHT = 6
-    SHORT_CENT_R = 7
-    SHORT_CENTER = 8
-    SHORT_CENT_L = 9
-    SHORT_LEFT = 10
-    MID_RIGHT = 11
-    MID_CENT_R = 12
-    MID_CENTER = 13
-    MID_CENT_L = 14
-    MID_LEFT = 15
-    LONG_RIGHT = 16
-    LONG_CENT_R = 17
-    LONG_CENTER = 18
-    LONG_CENT_L = 19
-    LONG_LEFT = 20
-    FAR_RIGHT = 16
-    FAR_CENT_R = 17
-    FAR_CENTER = 18
-    FAR_CENT_L = 19
-    FAR_LEFT = 20
-    DEEP_RIGHT = 21
-    DEEP_CENT_R = 22
-    DEEP_CENTER = 23
-    DEEP_CENT_L = 24
-    DEEP_LEFT = 25
-
-
-class GenericOff(Enum):
+class GenOff(Enum):
     REC1 = 1
     REC2 = 2
     REC3 = 3

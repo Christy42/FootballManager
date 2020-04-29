@@ -15,7 +15,7 @@ class YAC(Procedure):
                                             self._tackler.strength - self._tackler.tackling))
 
 
-class GetTackler(Procedure):
+class GetTacklerRun(Procedure):
     def __init__(self, match):
         super().__init__(match)
 

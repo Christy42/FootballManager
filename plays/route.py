@@ -1,4 +1,5 @@
-from enums import FieldPoints, GenericOff, OffAssignments
+from enums import OffAssign, GenOff
+from plays.field_loc import *
 
 
 class RouteRead:
@@ -10,6 +11,7 @@ class RouteRead:
         self._reads = reads
         self._assignments = assignments
         self._timing = timing
+        self._yards = {a: 0 if type(a) != FieldLocation else a.yards for a in self._assignments}
 
     @property
     def reads(self):
@@ -18,6 +20,10 @@ class RouteRead:
     @property
     def timing(self):
         return self._timing
+
+    @property
+    def assignments(self):
+        return self._assignments
 
 
 class Route:
@@ -29,12 +35,9 @@ class Route:
 
 
 # How to deal with players and not use numbers?  Need something else or I will get mixed up.  # Need to include blocking
-_DRIVE_MAN = RouteRead("Drive", [GenericOff.REC2, GenericOff.REC1, GenericOff.REC4],
-                       {GenericOff.REC2: FieldPoints.MID_LEFT, GenericOff.REC1: FieldPoints.SHORT_LEFT,
-                        GenericOff.REC4: FieldPoints.MID_CENTER, GenericOff.REC5: FieldPoints.SHORT_RIGHT,
-                        GenericOff.REC3: OffAssignments.RIGHT_BLOCK}, GenericOff.REC5,
-                       {GenericOff.REC1: 2, GenericOff.REC2: 2.5, GenericOff.REC3: 0, GenericOff.REC4: 2,
-                        GenericOff.REC5: 1.5})
+_DRIVE_MAN = RouteRead("Drive", [GenOff.REC2, GenOff.REC1, GenOff.REC4],
+                       {GenOff.REC2: MID_LEFT, GenOff.REC1: SHORT_LEFT, GenOff.REC4: MID_CENTER,
+                        GenOff.REC5: SHORT_RIGHT, GenOff.REC3: OffAssign.RIGHT_BLOCK}, GenOff.REC5,
+                       {GenOff.REC1: 2, GenOff.REC2: 2.5, GenOff.REC3: 0, GenOff.REC4: 2, GenOff.REC5: 1.5})
 
 DRIVE_SINGLEBACK = Route(_DRIVE_MAN, _DRIVE_MAN, _DRIVE_MAN, _DRIVE_MAN)
-

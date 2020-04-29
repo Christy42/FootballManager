@@ -1,10 +1,11 @@
 from procedures.tackling_procedures import *
 from enums import OffAssignments, DefensiveAssignments, Side, GenericOff
 from utils import combine_values, repeated_random
+import game as g
 
 
 class RouteRun(Procedure):
-    def __init__(self, match):
+    def __init__(self, match: g.Match):
         super().__init__(match)
 
     def step(self):
@@ -29,10 +30,11 @@ class RouteRun(Procedure):
         # Receiver 1-> some help from 2 and maybe 3
         # Receiver 2, some help from 1 and maybe 3
         # Receiver 3, some help from 1 and 2
+        self.match.state.route_effect = routes_effect
 
 
 class PassBlock(Procedure):
-    def __init__(self, match):
+    def __init__(self, match: g.Match):
         super().__init__(match)
 
     def step(self):
@@ -118,34 +120,37 @@ class Pass(Procedure):
 
 
 class DecisionMade(Procedure):
-    def __init__(self, match):
+    def __init__(self, match: g.Match):
         super().__init__(match)
 
     def step(self):
+        qb = self.match.state.cur_off_players[GenericOff.QB]
         times = self.match.state.cur_off_play.route.times
-        qb_time = self.match.state.qb_time
+        qb_time = min(self.match.state.qb_time.values())
+        qb_time -= random() / 2 * (1 - qb.awareness / 1000)
         # Figure out right route.
+        r_values = {}
+        multi = 50
         for i in self.match.state.cur_off_play.route.reads:
-            pass
+            r_values.update({i: self.match.state.route_effect[i] * multi * (random() / 2 + 0.5)})
+            multi = multi * 0.75
+        r_values = {a: r_values[a] / sum(r_values.values()) for a in r_values}
+        read = max(r_values, key=r_values.get)
         # Need time QB has
         # Need the time the routes take
-        # Check reads, work out which is right (50, 30, 20 or (60, 40) of them being the right read) or dump off
-        # Call pass attempt or call sack (or call QB run eventually)
-
-
-class Catch(Procedure):
-    def __init__(self, match):
-        super().__init__(match)
-
-    def step(self):
-        pass
-        # Need to get pass bonus or not.
-        # How to report the change.  If catch then stick in comp yards and if miss set to 0 and end play
+        # Check reads, work out which is right (50, 30, 20) or (60, 40) of them being the right read) or dump off
+        # Call pass attempt or call sack (or call QB run eventually) or take? sack
 
 
 class AfterCatch(Procedure):
-    def __init__(self, match):
+    def __init__(self, match: g.Match, receiver):
         super().__init__(match)
+        self._rec = receiver
 
     def step(self):
-        pass
+        if random() < 1:
+            self.match.state.add_temp_yards(0)
+        else:
+            # TODO: How to decide on tackler
+            self.match.state.add_temp_yards(self.match.state.cur_off_play.route.distance[self._rec])
+            Tackling(self.match, self._rec, )
