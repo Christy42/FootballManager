@@ -1,15 +1,22 @@
-from enums import OffAssign, GenOff
+from enums import GenOff
 from plays.field_loc import *
 
 
 class SingleRoute:
-    def __init__(self, side, depth=Depth.BACK, blocking=False, qb=False, rusher=False, route=False):
-        self.side = side
-        self.depth = depth
+    def __init__(self, field_loc, blocking=False, qb=False, rusher=False, route=False):
+        self.field_loc = field_loc
         self.blocking = blocking
         self.qb = qb
         self.rusher = rusher
         self.route = route
+
+    @property
+    def side(self):
+        return self.field_loc.side
+
+    @property
+    def depth(self):
+        return self.field_loc.depth
 
 
 class RouteCombo:
@@ -38,33 +45,38 @@ class RouteCombo:
 
 
 # TODO: SCAN block
-BLOCK_LEFT = SingleRoute(side=Side.LEFT, blocking=True)
-BLOCK_CENTER = SingleRoute(side=Side.CENTER, blocking=True)
-BLOCK_RIGHT = SingleRoute(side=Side.RIGHT, blocking=True)
-RUN_LEFT = SingleRoute(side=Side.LEFT, rusher=True)
-RUN_CENTER = SingleRoute(side=Side.CENTER, rusher=True)
-RUN_RIGHT = SingleRoute(side=Side.RIGHT, rusher=True)
-SHORT_LEFT_R = SingleRoute(side=Side.LEFT, depth=Depth.SHORT, route=True)
-MID_LEFT_R = SingleRoute(side=Side.LEFT, depth=Depth.MID, route=True)
-MID_CENTER_R = SingleRoute(side=Side.CENTER, depth=Depth.MID, route=True)
-SHORT_RIGHT_R = SingleRoute(side=Side.RIGHT, depth=Depth.SHORT, route=True)
-PASSING = SingleRoute(side=Side.CENTER, depth=Depth.BACK, qb=True)
+BLOCK_LEFT = SingleRoute(field_loc=BACK_LEFT, blocking=True)
+BLOCK_CENTER = SingleRoute(field_loc=BACK_CENTER, blocking=True)
+BLOCK_RIGHT = SingleRoute(field_loc=BACK_RIGHT, blocking=True)
+# BLOCK_SCAN = SingleRoute(side=Side.SCAN, blocking=True)
+RUN_LEFT = SingleRoute(field_loc=BACK_LEFT, rusher=True)
+RUN_CENTER = SingleRoute(field_loc=BACK_CENTER, rusher=True)
+RUN_RIGHT = SingleRoute(field_loc=BACK_RIGHT, rusher=True)
+SHORT_LEFT_R = SingleRoute(field_loc=SHORT_LEFT, route=True)
+MID_LEFT_R = SingleRoute(field_loc=MID_LEFT, route=True)
+MID_CENTER_R = SingleRoute(field_loc=MID_CENTER, route=True)
+FAR_LEFT_R = SingleRoute(field_loc=FAR_LEFT, route=True)
+FAR_CENT_L_R = SingleRoute(field_loc=FAR_CENT_L, route=True)
+FAR_CENT_R_R = SingleRoute(field_loc=FAR_CENT_R, route=True)
+FAR_RIGHT_R = SingleRoute(field_loc=FAR_RIGHT, route=True)
+SHORT_RIGHT_R = SingleRoute(field_loc=SHORT_RIGHT, route=True)
+PASSING = SingleRoute(field_loc=BACK_CENTER, qb=True)
 
 
 # How to deal with players and not use numbers?  Need something else or I will get mixed up.  # Need to include blocking
 DRIVE_SINGLEBACK = RouteCombo("Drive",
                        {GenOff.OT_R: BLOCK_RIGHT, GenOff.OG_R: BLOCK_RIGHT, GenOff.C: BLOCK_CENTER,
-                        GenOff.OG_L: BLOCK_LEFT, GenOff.OT_L: BLOCK_LEFT, GenOff.REC2: MID_LEFT,
-                        GenOff.REC1: SHORT_LEFT, GenOff.REC4: MID_CENTER, GenOff.QB: PASSING,
-                        GenOff.REC5: SHORT_RIGHT, GenOff.REC3: BLOCK_RIGHT},
+                        GenOff.OG_L: BLOCK_LEFT, GenOff.OT_L: BLOCK_LEFT, GenOff.REC2: MID_LEFT_R,
+                        GenOff.REC1: SHORT_LEFT_R, GenOff.REC4: MID_CENTER_R, GenOff.QB: PASSING,
+                        GenOff.REC5: SHORT_RIGHT_R, GenOff.REC3: BLOCK_RIGHT},
                        {GenOff.REC1: 2, GenOff.REC2: 2.5, GenOff.REC3: 0, GenOff.REC4: 2, GenOff.REC5: 1.5},
                        [GenOff.REC2, GenOff.REC1, GenOff.REC4], GenOff.REC5)
 
 CENTER_RUN = RouteCombo("Center Run",
                         {GenOff.OT_R: BLOCK_RIGHT, GenOff.OG_R: BLOCK_RIGHT, GenOff.C: BLOCK_CENTER,
-                         GenOff.OG_L: BLOCK_LEFT,  GenOff.OT_L: BLOCK_LEFT,  GenOff.REC2: FAR_CENT_R,
-                         GenOff.REC1: FAR_LEFT,    GenOff.REC4: BLOCK_RIGHT,  GenOff.QB: PASSING,
-                         GenOff.REC5: RUN_CENTER,  GenOff.REC3: FAR_CENT_L},
+                         GenOff.OG_L: BLOCK_LEFT,  GenOff.OT_L: BLOCK_LEFT,  GenOff.REC2: FAR_CENT_R_R,
+                         GenOff.REC1: FAR_LEFT_R,    GenOff.REC4: BLOCK_RIGHT,  GenOff.QB: PASSING,
+                         GenOff.REC5: RUN_CENTER,  GenOff.REC3: FAR_CENT_L_R},
                         {GenOff.REC1: 0, GenOff.REC2: 0, GenOff.REC3: 0, GenOff.REC4: 0, GenOff.REC5: 0},
                         [], None)
 

@@ -1,5 +1,5 @@
 from procedures.tackling_procedures import *
-from enums import OffAssign, Side, GenOff
+from enums import Side, GenOff
 from utils import combine_values, repeated_random
 # import game as g
 

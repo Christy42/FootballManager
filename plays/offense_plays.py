@@ -1,4 +1,4 @@
-from enums import OffenseFormation, PlayStyle, Side, OffAssign, RunStyle, GenOff
+from enums import OffenseFormation, PlayStyle, Side, RunStyle, GenOff
 from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM, KICK_OFF
 from plays.route import *
 
@@ -17,7 +17,7 @@ class OffensePlay:
         self._commentary_name = com_name
         self._runner = runner
         self._style = style
-        self._reads = self.assignments.reads
+        self._reads = self._assignments.reads
 
     @property
     def formation(self):

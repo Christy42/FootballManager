@@ -104,6 +104,7 @@ class Side(Enum):
     CENTER = 3
     CENT_R = 4
     RIGHT = 5
+    SCAN = 6
 
 
 class Depth(Enum):
@@ -143,17 +144,6 @@ class Attribute(Enum):
     CARRYING = 20
     ROUTE_RUNNING = 21
     RUSHING = 22
-
-
-class OffAssign(Enum):
-    RUNNING = 1
-    LEFT_BLOCK = 2
-    RIGHT_BLOCK = 3
-    CENTER_BLOCK = 4
-    ROUTE_RUNNING = 5
-    QB = 6
-    KICK = 7
-    SCAN_BLOCK = 8
 
 
 class GenOff(Enum):
