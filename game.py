@@ -1,9 +1,9 @@
 from copy import deepcopy
 import math
-from random import randint, choices
+from random import randint
 
 from stack import Stack
-from enums import Possession, PlayStyle, Position, GenericOff
+from enums import Possession, PlayStyle, GenOff
 from team.team import MatchTeam
 from procedures.total_play import FullPlay
 
@@ -66,8 +66,7 @@ class GameState:
         self._team_1_pace = 25
         self._team_2_pace = 25
         self._down = 1
-        self.routes_ran = {GenericOff.REC1: 0, GenericOff.REC4: 0, GenericOff.REC3: 0, GenericOff.REC2: 0,
-                           GenericOff.REC5: 0}
+        self.routes_ran = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
         self._turnover = 0
         self._temp_yards = 0
         self._outcome = None
@@ -142,8 +141,7 @@ class GameState:
         self._temp_yards = 0
         self.tackler = 0
         self._qb_time = 0
-        self.routes_ran = {GenericOff.REC1: 0, GenericOff.REC4: 0, GenericOff.REC3: 0, GenericOff.REC2: 0,
-                           GenericOff.REC5: 0}
+        self.routes_ran = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
 
     def end_play_checks(self):
         self.flush_temp_yards()

@@ -2,7 +2,7 @@ import yaml
 import random
 
 from utils import get_pos
-from enums import OffenseFormation, DefenseFormation, Position, GenericOff
+from enums import OffenseFormation, DefenseFormation, Position, GenOff
 from team.player import MatchPlayer
 from plays.defense_plays import DEF_PLAY_LIST
 from plays.offense_plays import OFF_PLAY_LIST
@@ -129,10 +129,9 @@ class MatchTeam(BaseTeam):
         # Should eventually be a class really instead of relying on numbers.
         players = [ot2, og2, c, og1, ot1, wr1, wr2, wr3, wr4, rb, fb, te, te2, gnr1, gnr2, qb, k]
         plyrs = [x for x in players if x is not None]
-        return {GenericOff.OT_L: plyrs[0], GenericOff.OG_L: plyrs[1], GenericOff.C: plyrs[2], GenericOff.OG_R: plyrs[3],
-                GenericOff.OT_R: plyrs[4], GenericOff.REC1: plyrs[5], GenericOff.REC2: plyrs[6],
-                GenericOff.REC3: plyrs[7], GenericOff.REC4: plyrs[8], GenericOff.REC5: plyrs[9],
-                GenericOff.QB: plyrs[10]}
+        return {GenOff.OT_L: plyrs[0], GenOff.OG_L: plyrs[1], GenOff.C: plyrs[2], GenOff.OG_R: plyrs[3],
+                GenOff.OT_R: plyrs[4], GenOff.REC1: plyrs[5], GenOff.REC2: plyrs[6], GenOff.REC3: plyrs[7],
+                GenOff.REC4: plyrs[8], GenOff.REC5: plyrs[9], GenOff.QB: plyrs[10]}
 
     # ordering of DE1, DT1, DT2, DE2, MLB1, MLB2, OLB1, OLB2, NICKEL, DIME, CB1, CB2, SF1, SF2 as appropriate
     def choose_defense(self, formation: df.DefenseFormation) -> list:

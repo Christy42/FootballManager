@@ -10,6 +10,7 @@ class Coverage:
         self._blitz = blitz
 
     def amend_area(self, routes: RouteRead):  # Run this for each if area is None at start of a play?
+        # TODO: This doesn't gel with running plays as is.  That needs to change, make a generic Run route?
         if self._area is None:
             if type(routes.assignments[self._target]) == FieldLocation:
                 self._area = routes.assignments[self._target]
@@ -29,6 +30,14 @@ class Coverage:
     @property
     def blitz(self):
         return self._blitz
+
+    @property
+    def side(self):
+        return None if self._area is None else self.area.side
+
+    @property
+    def depth(self):
+        return None if self._area is None else self.area.depth
 
 
 CENTER_RUSH = Coverage(area=BACK_CENTER, target=GenOff.QB, blitz=True)

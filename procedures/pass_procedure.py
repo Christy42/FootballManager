@@ -1,11 +1,11 @@
 from procedures.tackling_procedures import *
-from enums import OffAssignments, DefensiveAssignments, Side, GenericOff
+from enums import OffAssign, Side, GenOff
 from utils import combine_values, repeated_random
-import game as g
+# import game as g
 
 
 class RouteRun(Procedure):
-    def __init__(self, match: g.Match):
+    def __init__(self, match):
         super().__init__(match)
 
     def step(self):
@@ -34,7 +34,7 @@ class RouteRun(Procedure):
 
 
 class PassBlock(Procedure):
-    def __init__(self, match: g.Match):
+    def __init__(self, match):
         super().__init__(match)
 
     def step(self):
@@ -47,41 +47,39 @@ class PassBlock(Procedure):
         # TODO: Need to return these times somewhere going forward
 
     def _blocks(self) -> dict:
-        blocks = {OffAssignments.LEFT_BLOCK: [], OffAssignments.CENTER_BLOCK: [], OffAssignments.RIGHT_BLOCK: []}
-        for side in [OffAssignments.LEFT_BLOCK, OffAssignments.CENTER_BLOCK, OffAssignments.RIGHT_BLOCK]:
-            for i in GenericOff:
+        blocks = {OffAssign.LEFT_BLOCK: [], OffAssign.CENTER_BLOCK: [], OffAssign.RIGHT_BLOCK: []}
+        for side in [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK, OffAssign.RIGHT_BLOCK]:
+            for i in GenOff:
                 player = self.match.state.cur_off_players[i]
                 if self.match.state.cur_off_play.assignments[i] == side:
                     blocks[side].append((player.block * 6 * player.burst / 1000 + 3 * player.strength +
                                          player.positioning * player.burst / 1000) /
                                         (13 + 5 if random.random() > 0.9 else 0 - 5 if random.random() < 0.1 else 0 +
                                          0.5 if random.random() > 0.95 else 0 - 0.5 if random.random() < 0.05 else 0))
-        return {Side.LEFT: combine_values(blocks[OffAssignments.LEFT_BLOCK]),
-                Side.CENTER: combine_values(blocks[OffAssignments.CENTER_BLOCK]),
-                Side.RIGHT: combine_values(blocks[OffAssignments.RIGHT_BLOCK])}
+        return {Side.LEFT: combine_values(blocks[OffAssign.LEFT_BLOCK]),
+                Side.CENTER: combine_values(blocks[OffAssign.CENTER_BLOCK]),
+                Side.RIGHT: combine_values(blocks[OffAssign.RIGHT_BLOCK])}
 
     def _rush(self) -> dict:
-        rushes = {DefensiveAssignments.LEFT_RUSH: [], DefensiveAssignments.CENTER_BLOCK: [],
-                  DefensiveAssignments.RIGHT_BLOCK: []}
-        for side in [DefensiveAssignments.LEFT_RUSH,
-                     DefensiveAssignments.CENTER_RUSH, DefensiveAssignments.RIGHT_RUSH]:
+        rushes = {Side.LEFT: [], Side.CENTER: [], Side.RIGHT: []}
+        for side in Side:
             for i in range(self.match.state.cur_def_assignments):
                 player = self.match.state.cur_def_players[i]
-                if self.match.state.cur_off_play.assignments[i] == side:
+                assignment = self.match.state.cur_def_play.assignments[i]
+                if assignment.side == side and assignment.blitz:
                     rushes[side].append((player.rush * 6 * player.burst / 1000 + 3 * player.strength +
                                          player.speed * player.burst / 1000) /
                                         (13 + 5 if random.random() > 0.9 else 0 - 5 if random.random() < 0.1 else 0 +
                                          0.5 if random.random() > 0.95 else 0 - 0.5 if random.random() < 0.05 else 0))
-        return {Side.LEFT: combine_values(rushes[DefensiveAssignments.LEFT_RUSH]),
-                Side.CENTER: combine_values(rushes[DefensiveAssignments.CENTER_RUSH]),
-                Side.RIGHT: combine_values(rushes[DefensiveAssignments.RIGHT_RUSH])}
+        return {Side.LEFT: combine_values(rushes[Side.LEFT]), Side.CENTER: combine_values(rushes[Side.CENTER]),
+                Side.RIGHT: combine_values(rushes[Side.RIGHT])}
 
     def _scan(self, block, rush) -> dict:
         effect = [rush[j] / block[j] for j in [Side.LEFT, Side.CENTER, Side.RIGHT]]
         vision_scan = Side.LEFT if effect[0] == max(effect) else Side.CENTER if effect[1] == max(effect) else Side.Right
 
-        for i in GenericOff:
-            if self.match.state.cur_off_play.assignments[i] == OffAssignments.SCAN_BLOCK:
+        for i in GenOff:
+            if self.match.state.cur_off_play.assignments[i] == OffAssign.SCAN_BLOCK:
                 player = self.match.state.cur_def_players[i]
                 block[vision_scan] += (player.vision * player.block * player.positioning / 6000000 +
                                        player.strength * player.positioning / 6000) if random() * 2000 < \
@@ -97,7 +95,7 @@ class PassBlock(Procedure):
 
         scan = max(times, key=times.get)
         new_times = {x: times[x] for x in times}
-        player = self.match.state.cur_off_players[GenericOff.QB]
+        player = self.match.state.cur_off_players[GenOff.QB]
         max_speed = 0
         for i in range(self.match.state.cur_def_assignments):
             max_speed = self.match.state.cur_def_players[i].rush * self.match.state.cur_def_players[i].speed \
@@ -120,11 +118,11 @@ class Pass(Procedure):
 
 
 class DecisionMade(Procedure):
-    def __init__(self, match: g.Match):
+    def __init__(self, match):
         super().__init__(match)
 
     def step(self):
-        qb = self.match.state.cur_off_players[GenericOff.QB]
+        qb = self.match.state.cur_off_players[GenOff.QB]
         times = self.match.state.cur_off_play.route.times
         qb_time = min(self.match.state.qb_time.values())
         qb_time -= random() / 2 * (1 - qb.awareness / 1000)
@@ -143,7 +141,7 @@ class DecisionMade(Procedure):
 
 
 class AfterCatch(Procedure):
-    def __init__(self, match: g.Match, receiver):
+    def __init__(self, match, receiver):
         super().__init__(match)
         self._rec = receiver
 

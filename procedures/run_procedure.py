@@ -2,22 +2,13 @@ from random import choice, randint
 
 from procedures.tackling_procedures import Tackling
 from procedures.procedure import Procedure
-from enums import GenericOff, RunStyle, OffAssign, DefAssign, PlayStyle, Side
+from enums import GenOff, RunStyle, OffAssign, Side, Depth
+from plays.coverage import Coverage
 
 
 # TODO: What types of run are there?  How do they differ.  Probably don't need new ones for each side
 # TODO: Add more types of run but get these working first
 class Run(Procedure):
-    LEFT_ASSIGN_S = [DefAssign.BACK_CENT_L, DefAssign.BACK_LEFT, DefAssign.SHORT_LEFT, DefAssign.SHORT_CENT_L]
-    CENT_ASSIGN_S = [DefAssign.BACK_CENT_L, DefAssign.BACK_LEFT, DefAssign.SHORT_LEFT, DefAssign.SHORT_CENT_L]
-    RIGHT_ASSIGN_S = [DefAssign.BACK_CENT_L, DefAssign.BACK_LEFT, DefAssign.SHORT_LEFT, DefAssign.SHORT_CENT_L]
-    LEFT_ASSIGN_M = [DefAssign.BACK_CENT_L, DefAssign.BACK_LEFT, DefAssign.SHORT_LEFT, DefAssign.SHORT_CENT_L]
-    CENT_ASSIGN_M = [DefAssign.BACK_CENT_L, DefAssign.BACK_LEFT, DefAssign.SHORT_LEFT, DefAssign.SHORT_CENT_L]
-    RIGHT_ASSIGN_M = [DefAssign.BACK_CENT_L, DefAssign.BACK_LEFT, DefAssign.SHORT_LEFT, DefAssign.SHORT_CENT_L]
-    LEFT_ASSIGN_B = [DefAssign.BACK_CENT_L, DefAssign.BACK_LEFT, DefAssign.SHORT_LEFT, DefAssign.SHORT_CENT_L]
-    CENT_ASSIGN_M = [DefAssign.BACK_CENT_L, DefAssign.BACK_LEFT, DefAssign.SHORT_LEFT, DefAssign.SHORT_CENT_L]
-    RIGHT_ASSIGN_
-
     def __init__(self, match):
         super().__init__(match)
         self._side = self.match.state.cur_off_play.side
@@ -39,19 +30,24 @@ class Run(Procedure):
         sec_layer = True if self.match.state.temp_yards > 2 else False
         tackler = 10
         points = [0] * 11
-        if self.match.state.cur_off_play.side == Side.LEFT:
-            for i in range(len(self.match.state.cur_def_play.assignments)):
-                if self.match.state.cur_def_play.assignments[i] == DefAssign.LEFT_RUSH:
-                    points[i] += 10 + randint(0, 10) - randint(0, 10) * sec_layer
-                if self.match.state.cur_def_play.assignments[i] in [DefAssign.RIGHT_RUSH, DefAssign.CENTER_RUSH]:
-                    points[i] += 8 + randint(0, 5) - randint(0, 10) * sec_layer
-                if self.match.state.cur_def_play.assignments[i] in self.LEFT_ASSIGN_S:
-                    pass
-        elif self.match.state.cur_off_play.side == Side.CENTER:
-            tackler = choice([2, 3, 6, 7])
-        elif self.match.state.cur_off_play.side == Side.RIGHT:
-            tackler = choice([3, 4, 7, 8])
-        return tackler
+        for i in range(len(self.match.state.cur_def_play.assignments)):
+            if self.match.state.cur_def_play.assignments[i].blitz:
+                points[i] += 10 + randint(0, 5) - sec_layer * randint(0, 5)
+            if (self.match.state.cur_off_play.side == Side.LEFT and
+                    self.match.state.cur_def_play.assignments[i].side in [Side.LEFT, Side.CENT_L]):
+                points[i] += 10 + randint(0, 5)
+            elif (self.match.state.cur_off_play.side == Side.RIGHT and
+                    self.match.state.cur_def_play.assignments[i].side in [Side.RIGHT, Side.CENT_R]):
+                points[i] += 10 + randint(0, 5)
+            elif (self.match.state.cur_off_play.side == Side.CENTER and
+                    self.match.state.cur_def_play.assignments[i].side == Side.CENTER):
+                points[i] += 10 + randint(0, 5)
+            if self.match.state.cur_def_play.assignments[i].depth in [Depth.SHORT, Depth.BACK]:
+                points[i] += 5 + randint(0, 3)
+            elif self.match.state.cur_def_play.assignments[i].depth in [Depth.MID, Depth.DEEP]:
+                points[i] -= 5 - randint(0, 3)
+        arg_max = lambda j: points[j]
+        return max(range(len(points)), key=arg_max)
 
 
 # TODO: I mean, returns a number but doesn't do very much???
@@ -90,19 +86,19 @@ class YBCRun(Procedure):
     def blocking(self):
         # TODO: Who is actually involved in each position on this play?
         # Left blocking
-        for i in GenericOff:
+        for i in GenOff:
             if self.match.state.cur_off_play.assignments[i] == OffAssign.LEFT_BLOCK:
                 self._left_block += 0.9 * self.block_addition(self.match.state.cur_off_players[i][0])
             elif self.match.state.cur_off_play.assignments[i] == OffAssign.CENTER_BLOCK:
                 self._left_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
         # Right blocking
-        for i in GenericOff:
+        for i in GenOff:
             if self.match.state.cur_off_play.assignments[i] == OffAssign.RIGHT_BLOCK:
                 self._right_block += 0.9 * self.block_addition(self.match.state.cur_off_players[i][0])
             elif self.match.state.cur_off_play.assignments[i] == OffAssign.CENTER_BLOCK:
                 self._right_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
         # Center blocking
-        for i in GenericOff:
+        for i in GenOff:
             if self.match.state.cur_off_play.assignments[i] == OffAssign.CENTER_BLOCK:
                 self._center_block += 0.8 * self.block_addition(self.match.state.cur_off_players[i][0])
             elif self.match.state.cur_off_play.assignments[i] == OffAssign.RIGHT_BLOCK:
@@ -122,28 +118,31 @@ class YBCRun(Procedure):
         # TODO: Who is actually involved in each position on this play?
         # Left blocking
         for i in range(len(self.match.state.cur_off_play.assignments)):
-            if self.match.state.cur_def_play.assignments[i] == DefAssign.LEFT_RUSH:
+            assignment = self.match.state.cur_def_play.assignments[i]
+            if assignment.side == Side.LEFT and assignment.blitz:
                 self._left_rush += 0.9 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
                                    * self.form_adjustment(i)
-            elif self.match.state.cur_def_play.assignments[i] == DefAssign.CENTER_RUSH:
+            elif assignment.side == Side.CENTER and assignment.blitz:
                 self._left_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
                                    * self.form_adjustment(i)
         # Right blocking
         for i in range(len(self.match.state.cur_off_play.assignments)):
-            if self.match.state.cur_def_play.assignments[i] == DefAssign.RIGHT_RUSH:
+            assignment = self.match.state.cur_def_play.assignments[i]
+            if assignment.side == Side.RIGHT and assignment.blitz:
                 self._right_rush += 0.9 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
                                     * self.form_adjustment(i)
-            elif self.match.state.cur_def_play.assignments[i] == DefAssign.CENTER_RUSH:
+            elif assignment.side == Side.CENTER and assignment.blitz:
                 self._right_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) *\
                                     self.form_adjustment(i)
         # Center blocking
         for i in range(len(self.match.state.cur_off_play.assignments)):
-            if self.match.state.cur_def_play.assignments[i] == DefAssign.CENTER_RUSH:
+            assignment = self.match.state.cur_def_play.assignments[i]
+            if assignment.side == Side.CENTER and assignment.blitz:
                 self._center_rush += 0.8 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
                                      * self.form_adjustment(i)
-            elif self.match.state.cur_def_play.assignments[i] == DefAssign.RIGHT_RUSH:
+            elif assignment.side == Side.RIGHT and assignment.blitz:
                 self._center_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
                                      * self.form_adjustment(i)
-            elif self.match.state.cur_def_play.assignments[i] == DefAssign.LEFT_RUSH:
+            elif assignment.side == Side.LEFT and assignment.blitz:
                 self._center_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
                                      * self.form_adjustment(i)

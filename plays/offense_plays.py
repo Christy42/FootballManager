@@ -1,4 +1,4 @@
-from enums import OffenseFormation, PlayStyle, Side, OffAssign, RunStyle, GenericOff
+from enums import OffenseFormation, PlayStyle, Side, OffAssign, RunStyle, GenOff
 from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM, KICK_OFF
 from plays.route import DRIVE_SINGLEBACK
 
@@ -10,12 +10,10 @@ from plays.route import DRIVE_SINGLEBACK
 
 class OffensePlay:
     def __init__(self, formation, style, assignments, direction, runner, name, com_name, block_style, route=None):
-        self._assignments = {GenericOff.OT_L: assignments[0], GenericOff.OG_L: assignments[1],
-                             GenericOff.C: assignments[2], GenericOff.OG_R: assignments[3],
-                             GenericOff.OT_R: assignments[4], GenericOff.REC1: assignments[5],
-                             GenericOff.REC2: assignments[6], GenericOff.REC3: assignments[7],
-                             GenericOff.REC4: assignments[8], GenericOff.REC5: assignments[9],
-                             GenericOff.QB: assignments[10]}
+        self._assignments = {GenOff.OT_L: assignments[0], GenOff.OG_L: assignments[1], GenOff.C: assignments[2],
+                             GenOff.OG_R: assignments[3], GenOff.OT_R: assignments[4], GenOff.REC1: assignments[5],
+                             GenOff.REC2: assignments[6], GenOff.REC3: assignments[7], GenOff.REC4: assignments[8],
+                             GenOff.REC5: assignments[9], GenOff.QB: assignments[10]}
         self._direction = direction
         self._runner = 0
         self._formation = formation
@@ -65,7 +63,7 @@ OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN,
                                               OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
                                               OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
                                               OffAssign.RUNNING, OffAssign.RIGHT_BLOCK,
-                                              OffAssign.QB], Side.CENTER, GenericOff.REC4, "Man Center Run",
+                                              OffAssign.QB], Side.CENTER, GenOff.REC4, "Man Center Run",
                                              "Man Center Run", RunStyle.MAN),
                  "DriveSingleback": OffensePlay(SINGLEBACK, PlayStyle.PASS,
                                          [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK,
@@ -73,15 +71,15 @@ OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN,
                                           OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
                                           OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
                                           OffAssign.SCAN_BLOCK, OffAssign.ROUTE_RUNNING,
-                                          OffAssign.QB], Side.CENTER, GenericOff.REC4, "Man Center Run",
-                                                "Man Center Run", RunStyle.MAN, route=DRIVE_SINGLEBACK),
+                                          OffAssign.QB], Side.CENTER, GenOff.REC4, "Singleback Drive",
+                                                "Singleback Drive", RunStyle.MAN, route=DRIVE_SINGLEBACK),
                  "KickOff": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
                                         [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK,
                                          OffAssign.CENTER_BLOCK, OffAssign.CENTER_BLOCK,
                                          OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
                                          OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
                                          OffAssign.RUNNING, OffAssign.RIGHT_BLOCK,
-                                         OffAssign.KICK], Side.CENTER, GenericOff.REC4, "Kick Off",
+                                         OffAssign.KICK], Side.CENTER, GenOff.REC4, "Kick Off",
                                         "Kick Off", None),
                  "Kick": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
                                      [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK,
@@ -89,12 +87,12 @@ OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN,
                                       OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
                                       OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
                                       OffAssign.RUNNING, OffAssign.RIGHT_BLOCK,
-                                      OffAssign.KICK], Side.CENTER, GenericOff.REC4, "Kick", "Kick", None),
+                                      OffAssign.KICK], Side.CENTER, GenOff.REC4, "Kick", "Kick", None),
                  "Punt": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
                                      [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK,
                                       OffAssign.CENTER_BLOCK, OffAssign.CENTER_BLOCK,
                                       OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
                                       OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
                                       OffAssign.RUNNING, OffAssign.RIGHT_BLOCK,
-                                      OffAssign.KICK], Side.CENTER, GenericOff.REC4, "Punt", "Punt", None)
+                                      OffAssign.KICK], Side.CENTER, GenOff.REC4, "Punt", "Punt", None)
                  }
