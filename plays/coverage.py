@@ -1,6 +1,6 @@
 from enums import GenOff
 from plays.field_loc import *
-from plays.route import RouteRead
+from plays.route import RouteCombo
 
 
 class Coverage:
@@ -9,7 +9,7 @@ class Coverage:
         self._target = target
         self._blitz = blitz
 
-    def amend_area(self, routes: RouteRead):  # Run this for each if area is None at start of a play?
+    def amend_area(self, routes: RouteCombo):  # Run this for each if area is None at start of a play?
         # TODO: This doesn't gel with running plays as is.  That needs to change, make a generic Run route?
         if self._area is None:
             if type(routes.assignments[self._target]) == FieldLocation:

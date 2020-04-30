@@ -28,7 +28,6 @@ class Run(Procedure):
 
     def get_tackler(self):
         sec_layer = True if self.match.state.temp_yards > 2 else False
-        tackler = 10
         points = [0] * 11
         for i in range(len(self.match.state.cur_def_play.assignments)):
             if self.match.state.cur_def_play.assignments[i].blitz:
@@ -55,23 +54,15 @@ class Run(Procedure):
 class YBCRun(Procedure):
     def __init__(self, match):
         super().__init__(match)
-        self._left_block = 0
-        self._center_block = 0
-        self._right_block = 0
-        self._left_rush = 0
-        self._center_rush = 0
-        self._right_rush = 0
+        self._blocks = {Side.LEFT: 0, Side.CENTER: 0, Side.RIGHT: 0}
+        self._rushes = {Side.LEFT: 0, Side.CENTER: 0, Side.RIGHT: 0}
 
     def step(self):
         self.blocking()
         self.rush()
-        if self.match.state.cur_off_play.side == Side.LEFT:
-            self.match.state.add_temp_yards((self._left_block - self._left_rush) / 100)
-        elif self.match.state.cur_off_play.side == Side.CENTER:
-            self.match.state.add_temp_yards((self._center_block - self._center_rush) / 100)
-        elif self.match.state.cur_off_play.side == Side.RIGHT:
-            self.match.state.add_temp_yards((self._right_block - self._right_rush) / 100)
-        # how do we figure the yards??
+        side = self.match.state.cur_off_play.side
+        self.match.state.add_temp_yards((self._blocks[side] - self._rushes[side]) / 100)
+        # TODO: how do we figure the yards??
 
     def block_addition(self, player):
         if self.match.state.cur_off_play.block_style == RunStyle.ZONE:
@@ -119,30 +110,10 @@ class YBCRun(Procedure):
         # Left blocking
         for i in range(len(self.match.state.cur_off_play.assignments)):
             assignment = self.match.state.cur_def_play.assignments[i]
-            if assignment.side == Side.LEFT and assignment.blitz:
-                self._left_rush += 0.9 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
-                                   * self.form_adjustment(i)
-            elif assignment.side == Side.CENTER and assignment.blitz:
-                self._left_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
-                                   * self.form_adjustment(i)
-        # Right blocking
-        for i in range(len(self.match.state.cur_off_play.assignments)):
-            assignment = self.match.state.cur_def_play.assignments[i]
-            if assignment.side == Side.RIGHT and assignment.blitz:
-                self._right_rush += 0.9 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
-                                    * self.form_adjustment(i)
-            elif assignment.side == Side.CENTER and assignment.blitz:
-                self._right_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) *\
-                                    self.form_adjustment(i)
-        # Center blocking
-        for i in range(len(self.match.state.cur_off_play.assignments)):
-            assignment = self.match.state.cur_def_play.assignments[i]
-            if assignment.side == Side.CENTER and assignment.blitz:
-                self._center_rush += 0.8 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
-                                     * self.form_adjustment(i)
-            elif assignment.side == Side.RIGHT and assignment.blitz:
-                self._center_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
-                                     * self.form_adjustment(i)
-            elif assignment.side == Side.LEFT and assignment.blitz:
-                self._center_rush += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
-                                     * self.form_adjustment(i)
+            for side in [Side.LEFT, Side.CENTER, Side.RIGHT]:
+                if assignment.side == side and assignment.blitz:
+                    self._rushes[side] += 0.9 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
+                                   * self.form_adjustment(i) * (1 if side != Side.CENTER else 0.8 / 0.9)
+                elif (side == Side.CENTER or assignment == Side.CENTER) and assignment.blitz:
+                    self._rushes[side] += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
+                                       * self.form_adjustment(i)

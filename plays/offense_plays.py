@@ -1,6 +1,6 @@
 from enums import OffenseFormation, PlayStyle, Side, OffAssign, RunStyle, GenOff
 from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM, KICK_OFF
-from plays.route import DRIVE_SINGLEBACK
+from plays.route import *
 
 # Ordering (changes slightly depending on formation, RB, TEs go in for later WRs
 # OT, OG, C, OG, OT, WR1, WR2, WR3, WR4, RB1, QB
@@ -9,20 +9,15 @@ from plays.route import DRIVE_SINGLEBACK
 
 
 class OffensePlay:
-    def __init__(self, formation, style, assignments, direction, runner, name, com_name, block_style, route=None):
-        self._assignments = {GenOff.OT_L: assignments[0], GenOff.OG_L: assignments[1], GenOff.C: assignments[2],
-                             GenOff.OG_R: assignments[3], GenOff.OT_R: assignments[4], GenOff.REC1: assignments[5],
-                             GenOff.REC2: assignments[6], GenOff.REC3: assignments[7], GenOff.REC4: assignments[8],
-                             GenOff.REC5: assignments[9], GenOff.QB: assignments[10]}
+    def __init__(self, formation, style, assignments: RouteCombo, direction, runner, name, com_name):
         self._direction = direction
-        self._runner = 0
+        self._assignments = assignments
         self._formation = formation
         self._name = name
         self._commentary_name = com_name
         self._runner = runner
         self._style = style
-        self._block_style = block_style
-        self._route = route
+        self._reads = self.assignments.reads
 
     @property
     def formation(self):
@@ -42,57 +37,26 @@ class OffensePlay:
 
     @property
     def assignments(self):
-        return self._assignments
+        return self._assignments.assignments
 
     @property
     def style(self):
         return self._style
 
-    @property
-    def block_style(self):
-        return self._block_style
 
 # This system of assigning players on a list seems badly thought out.  OL_1->OL_5 maybe???
 # Or just have blocking style fill it all in really?  I guess some routes will have blocking info but just go through
 # Seems much much cleaner.  Even if there is only one or two blocking styles.  Think on it
 
 
-OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN,
-                                             [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK,
-                                              OffAssign.CENTER_BLOCK, OffAssign.CENTER_BLOCK,
-                                              OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
-                                              OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
-                                              OffAssign.RUNNING, OffAssign.RIGHT_BLOCK,
-                                              OffAssign.QB], Side.CENTER, GenOff.REC4, "Man Center Run",
-                                             "Man Center Run", RunStyle.MAN),
-                 "DriveSingleback": OffensePlay(SINGLEBACK, PlayStyle.PASS,
-                                         [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK,
-                                          OffAssign.CENTER_BLOCK, OffAssign.CENTER_BLOCK,
-                                          OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
-                                          OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
-                                          OffAssign.SCAN_BLOCK, OffAssign.ROUTE_RUNNING,
-                                          OffAssign.QB], Side.CENTER, GenOff.REC4, "Singleback Drive",
-                                                "Singleback Drive", RunStyle.MAN, route=DRIVE_SINGLEBACK),
+OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN, CENTER_RUN, Side.CENTER, GenOff.REC4,
+                                             "Man Center Run", "Man Center Run"),
+                 "DriveSingleback": OffensePlay(SINGLEBACK, PlayStyle.PASS, DRIVE_SINGLEBACK, Side.CENTER, GenOff.REC4,
+                                                "Singleback Drive", "Singleback Drive"),
                  "KickOff": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
-                                        [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK,
-                                         OffAssign.CENTER_BLOCK, OffAssign.CENTER_BLOCK,
-                                         OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
-                                         OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
-                                         OffAssign.RUNNING, OffAssign.RIGHT_BLOCK,
-                                         OffAssign.KICK], Side.CENTER, GenOff.REC4, "Kick Off",
-                                        "Kick Off", None),
+                                        KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Kick Off", "Kick Off"),
                  "Kick": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
-                                     [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK,
-                                      OffAssign.CENTER_BLOCK, OffAssign.CENTER_BLOCK,
-                                      OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
-                                      OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
-                                      OffAssign.RUNNING, OffAssign.RIGHT_BLOCK,
-                                      OffAssign.KICK], Side.CENTER, GenOff.REC4, "Kick", "Kick", None),
+                                     KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Kick", "Kick"),
                  "Punt": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
-                                     [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK,
-                                      OffAssign.CENTER_BLOCK, OffAssign.CENTER_BLOCK,
-                                      OffAssign.RIGHT_BLOCK, OffAssign.ROUTE_RUNNING,
-                                      OffAssign.ROUTE_RUNNING, OffAssign.ROUTE_RUNNING,
-                                      OffAssign.RUNNING, OffAssign.RIGHT_BLOCK,
-                                      OffAssign.KICK], Side.CENTER, GenOff.REC4, "Punt", "Punt", None)
+                                     KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Punt", "Punt")
                  }
