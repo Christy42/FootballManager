@@ -65,16 +65,16 @@ PASSING = SingleRoute(field_loc=BACK_CENTER, qb=True)
 
 # How to deal with players and not use numbers?  Need something else or I will get mixed up.  # Need to include blocking
 DRIVE_SINGLEBACK = RouteCombo("Drive",
-                       {GenOff.OT_R: BLOCK_RIGHT, GenOff.OG_R: BLOCK_RIGHT, GenOff.C: BLOCK_CENTER,
-                        GenOff.OG_L: BLOCK_LEFT, GenOff.OT_L: BLOCK_LEFT, GenOff.REC2: MID_LEFT_R,
+                       {GenOff.OT_R: BLOCK_RIGHT, GenOff.OG_R: BLOCK_CENTER, GenOff.C: BLOCK_CENTER,
+                        GenOff.OG_L: BLOCK_CENTER, GenOff.OT_L: BLOCK_LEFT, GenOff.REC2: MID_LEFT_R,
                         GenOff.REC1: SHORT_LEFT_R, GenOff.REC4: MID_CENTER_R, GenOff.QB: PASSING,
                         GenOff.REC5: SHORT_RIGHT_R, GenOff.REC3: BLOCK_RIGHT},
                        {GenOff.REC1: 2, GenOff.REC2: 2.5, GenOff.REC3: 0, GenOff.REC4: 2, GenOff.REC5: 1.5},
                        [GenOff.REC2, GenOff.REC1, GenOff.REC4], GenOff.REC5)
 
 CENTER_RUN = RouteCombo("Center Run",
-                        {GenOff.OT_R: BLOCK_RIGHT, GenOff.OG_R: BLOCK_RIGHT, GenOff.C: BLOCK_CENTER,
-                         GenOff.OG_L: BLOCK_LEFT,  GenOff.OT_L: BLOCK_LEFT,  GenOff.REC2: FAR_CENT_R_R,
+                        {GenOff.OT_R: BLOCK_RIGHT, GenOff.OG_R: BLOCK_CENTER, GenOff.C: BLOCK_CENTER,
+                         GenOff.OG_L: BLOCK_CENTER,  GenOff.OT_L: BLOCK_LEFT,  GenOff.REC2: FAR_CENT_R_R,
                          GenOff.REC1: FAR_LEFT_R,    GenOff.REC4: BLOCK_RIGHT,  GenOff.QB: PASSING,
                          GenOff.REC5: RUN_CENTER,  GenOff.REC3: FAR_CENT_L_R},
                         {GenOff.REC1: 0, GenOff.REC2: 0, GenOff.REC3: 0, GenOff.REC4: 0, GenOff.REC5: 0},

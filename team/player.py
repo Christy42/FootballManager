@@ -1,7 +1,6 @@
 import yaml
 from random import randint
 
-from enums import Attribute
 from team.attributes import MatchAttributes
 # from team.attributes import MatchAttributes
 

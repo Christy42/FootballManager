@@ -41,8 +41,8 @@ class Coverage:
 
 
 CENTER_RUSH = Coverage(area=BACK_CENTER, target=GenOff.QB, blitz=True)
-LEFT_RUSH = Coverage(area=BACK_CENT_L, target=GenOff.QB, blitz=True)
-RIGHT_RUSH = Coverage(area=BACK_CENT_R, target=GenOff.QB, blitz=True)
+LEFT_RUSH = Coverage(area=BACK_LEFT, target=GenOff.QB, blitz=True)
+RIGHT_RUSH = Coverage(area=BACK_RIGHT, target=GenOff.QB, blitz=True)
 MAN_1 = Coverage(area=None, target=GenOff.REC1, blitz=False)
 MAN_2 = Coverage(area=None, target=GenOff.REC2, blitz=False)
 MAN_3 = Coverage(area=None, target=GenOff.REC3, blitz=False)

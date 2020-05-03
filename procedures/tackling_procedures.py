@@ -1,33 +1,25 @@
 from procedures.procedure import Procedure
-from random import random, choice
-
-from enums import PlayStyle, Side
+from random import random
 
 
-class YAC(Procedure):
+class YAC(Procedure):  # Yards after contact
     def __init__(self, match, runner, tackler):
         super().__init__(match)
         self._runner = runner
         self._tackler = tackler
 
     def step(self):
-        self.match.state.add_temp_yards(max(0, self._runner.strength + self._runner.carrying -
-                                            self._tackler.strength - self._tackler.tackling))
-
-
-class GetTacklerRun(Procedure):
-    def __init__(self, match):
-        super().__init__(match)
-
-    def step(self):
-        # TODO: Vary these based off of formation and weighted probabilities
-        if self.match.state.cur_off_play.style == PlayStyle.RUN:
-            if self.match.state.cur_off_play.direction == Side.LEFT:
-                return choice([1, 2, 5, 6])
-            elif self.match.state.cur_off_play.direction == Side.CENTER:
-                return choice([2, 3, 6, 7])
-            elif self.match.state.cur_off_play.direction == Side.RIGHT:
-                return choice([3, 4, 7, 8])
+        tackling = (self._tackler.strength + self._tackler.tackling + self._tackler.elusiveness) / 3
+        runner = (self._runner.strength + self._runner.carrying + self._runner.elusiveness) / 3
+        if tackling / (runner + tackling) > random():
+            temp = 0
+        elif 0.5 > random():
+            temp = 1
+        elif 0.66 > random():
+            temp = 2
+        else:
+            temp = 3
+        self.match.state.add_temp_yards(temp)
 
 
 class Tackling(Procedure):
@@ -37,10 +29,12 @@ class Tackling(Procedure):
         self._runner = runner[0]
 
     def step(self):
-        if random() > (self._tackler.strength + self._tackler.tackling / self._runner.strength + self._runner.carrying):
-            # TODO: How many more yards from a failed tackle and who is the next tackler (if any)
+        # broken tackle - needs more yards from a tackle
+        if random() > (self._tackler.strength + self._tackler.tackling) / \
+                (self._runner.strength + self._runner.carrying):
             Tackling(self.match, self._runner, self._tackler)
         else:
+            # Tackle and maybe a fumble
             Fumble(self.match, self._runner, self._tackler)
         # TODO: That should depend on how many yards have gone
         # TODO: Who is the tackler?
@@ -53,8 +47,8 @@ class Fumble(Procedure):
         self._runner = runner
 
     def step(self):
-        if random() > (self._tackler.strength + self._tackler.tackling / self._runner.strength + self._runner.carrying):
-            self.match.state.blue_flag = 1
-            # TODO: Will this end the play??
+        if random() > 10 * (self._tackler.strength + self._tackler.tackling) / \
+                (self._runner.strength + self._runner.carrying):
+            self.match.state.blue_flag()
         else:
             YAC(self.match, self._runner, self._tackler)

@@ -1,9 +1,8 @@
-from random import choice, randint
+from random import randint, random
 
 from procedures.tackling_procedures import Tackling
 from procedures.procedure import Procedure
-from enums import GenOff, RunStyle, OffAssign, Side, Depth
-from plays.coverage import Coverage
+from enums import GenOff, Side, Depth
 
 
 # TODO: What types of run are there?  How do they differ.  Probably don't need new ones for each side
@@ -20,31 +19,27 @@ class Run(Procedure):
                  self.match.state.cur_def_players[self.get_tackler()])
         YBCRun(self.match)
 
-    def ybc(self):
-        pass
-
-    def broken_tackle(self):
-        pass
-
     def get_tackler(self):
+        # TODO: Need to assign the man defenders to a location
         sec_layer = True if self.match.state.temp_yards > 2 else False
         points = [0] * 11
         for i in range(len(self.match.state.cur_def_play.assignments)):
-            if self.match.state.cur_def_play.assignments[i].blitz:
-                points[i] += 10 + randint(0, 5) - sec_layer * randint(0, 5)
-            if (self.match.state.cur_off_play.side == Side.LEFT and
-                    self.match.state.cur_def_play.assignments[i].side in [Side.LEFT, Side.CENT_L]):
-                points[i] += 10 + randint(0, 5)
-            elif (self.match.state.cur_off_play.side == Side.RIGHT and
-                    self.match.state.cur_def_play.assignments[i].side in [Side.RIGHT, Side.CENT_R]):
-                points[i] += 10 + randint(0, 5)
-            elif (self.match.state.cur_off_play.side == Side.CENTER and
-                    self.match.state.cur_def_play.assignments[i].side == Side.CENTER):
-                points[i] += 10 + randint(0, 5)
-            if self.match.state.cur_def_play.assignments[i].depth in [Depth.SHORT, Depth.BACK]:
-                points[i] += 5 + randint(0, 3)
-            elif self.match.state.cur_def_play.assignments[i].depth in [Depth.MID, Depth.DEEP]:
-                points[i] -= 5 - randint(0, 3)
+            assign = self.match.state.cur_def_play.assignments[i]
+            points[i] += randint(0, 30)
+            if assign.blitz:
+                points[i] += 10 + randint(0, 10) - sec_layer * randint(0, 20)
+            if self.match.state.cur_off_play.side == Side.LEFT and assign.side in [Side.LEFT, Side.CENT_L]:
+                points[i] += 10
+            elif self.match.state.cur_off_play.side == Side.RIGHT and assign.side in [Side.RIGHT, Side.CENT_R]:
+                points[i] += 10
+            elif self.match.state.cur_off_play.side == Side.CENTER and assign.side == Side.CENTER:
+                points[i] += 10
+            if assign.depth in [Depth.SHORT, Depth.BACK]:
+                points[i] += 5 + randint(0, 6)
+            elif assign.depth in [Depth.MID, Depth.DEEP]:
+                points[i] -= 5 - randint(0, 6)
+            if assign.target is not None and self.match.state.cur_off_play.assignments[assign.target].rusher:
+                points[i] += 25 + randint(0, 20)
         arg_max = lambda j: points[j]
         return max(range(len(points)), key=arg_max)
 
@@ -60,60 +55,66 @@ class YBCRun(Procedure):
     def step(self):
         self.blocking()
         self.rush()
+        amend = 4
+        temp = {Side.LEFT: 0, Side.CENTER: 0, Side.RIGHT: 0}
+        for side in [Side.LEFT, Side.CENTER, Side.RIGHT]:
+            for i in range(-3, 6):
+                if random() < self._rushes[side] / (self._rushes[side] + self._blocks[side] * amend + randint(0, 1000)) or i == 5:
+                    temp[side] = i
+                    break
         side = self.match.state.cur_off_play.side
-        self.match.state.add_temp_yards((self._blocks[side] - self._rushes[side]) / 100)
+        if temp[side] > 0:
+            temp_value = temp[side] + sum([min(temp[a], 0) for a in [Side.LEFT, Side.CENTER, Side.RIGHT] if a != side]) / 2
+        else:
+            temp_value = temp[side]
+        self.match.state.add_temp_yards(temp_value)
+        print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG")
+        print(self._rushes)
+        print(self._blocks)
+        print([self._rushes[side] / (self._rushes[side] + self._blocks[side] * amend + randint(0, 1000)) for side in [Side.LEFT, Side.CENTER, Side.RIGHT]])
+        print(temp)
+        print(temp_value)
+        print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG")
+
         # TODO: how do we figure the yards??
 
-    def block_addition(self, player):
-        if self.match.state.cur_off_play.block_style == RunStyle.ZONE:
-            return (player.strength + 1.5 * player.blocking + 0.2 * player.elusiveness + 0.1 * player.speed) / 2.8
-        elif self.match.state.cur_off_play.block_style == RunStyle.MAN:
-            return (player.strength * 1.5 + player.blocking + 0.05 * player.elusiveness) / 2.55
+    @staticmethod
+    def block_addition(player):
+        return (player.strength * 1.5 + player.blocking + 0.05 * player.elusiveness) / 2.55
 
     @staticmethod
     def rush_addition(player):
         return (player.strength + 0.9 * player.rushing + 0.1 * player.elusiveness + 0.2 * player.speed) / 2.2
 
     def blocking(self):
-        # TODO: Who is actually involved in each position on this play?
-        # Left blocking
+        count = {Side.LEFT: 0, Side.CENTER: 0, Side.RIGHT: 0}
         for i in GenOff:
-            if self.match.state.cur_off_play.assignments[i] == OffAssign.LEFT_BLOCK:
-                self._left_block += 0.9 * self.block_addition(self.match.state.cur_off_players[i][0])
-            elif self.match.state.cur_off_play.assignments[i] == OffAssign.CENTER_BLOCK:
-                self._left_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
-        # Right blocking
-        for i in GenOff:
-            if self.match.state.cur_off_play.assignments[i] == OffAssign.RIGHT_BLOCK:
-                self._right_block += 0.9 * self.block_addition(self.match.state.cur_off_players[i][0])
-            elif self.match.state.cur_off_play.assignments[i] == OffAssign.CENTER_BLOCK:
-                self._right_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
-        # Center blocking
-        for i in GenOff:
-            if self.match.state.cur_off_play.assignments[i] == OffAssign.CENTER_BLOCK:
-                self._center_block += 0.8 * self.block_addition(self.match.state.cur_off_players[i][0])
-            elif self.match.state.cur_off_play.assignments[i] == OffAssign.RIGHT_BLOCK:
-                self._center_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
-            elif self.match.state.cur_off_play.assignments[i] == OffAssign.LEFT_BLOCK:
-                self._center_block += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
+            assignment = self.match.state.cur_off_play.assignments[i]
+            for side in [Side.LEFT, Side.CENTER, Side.RIGHT]:
+                if assignment.side == side and assignment.blocking:
+                    count[side] += 1
+                    self._blocks[side] += (0.8 if side == Side.CENTER else 0.9) * \
+                                           self.block_addition(self.match.state.cur_off_players[i][0])
+                elif (assignment.side == Side.CENTER or side == Side.CENTER) and assignment.blocking:
+                    self._blocks[side] += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
+        for side in [Side.LEFT, Side.CENTER, Side.RIGHT]:
+            self._blocks[side] = round(self._blocks[side] * (1 - min(count[side] - 1, 6) / 10))
 
     def form_adjustment(self, i):
-        if self.match.state.defense_formation.no_dl > i:
-            return 1
-        elif self.match.state.defense_formation.no_dl + self.match.state.defense_formation.no_lb > i:
-            return 0.9
-        else:
-            return 0.7
+        return 1 if self.match.state.defense_formation.no_dl > i else 0.9 \
+            if self.match.state.defense_formation.no_dl + self.match.state.defense_formation.no_lb > i else 0.7
 
     def rush(self):
-        # TODO: Who is actually involved in each position on this play?
-        # Left blocking
+        count = {Side.LEFT: 0, Side.CENTER: 0, Side.RIGHT: 0}
         for i in range(len(self.match.state.cur_off_play.assignments)):
             assignment = self.match.state.cur_def_play.assignments[i]
             for side in [Side.LEFT, Side.CENTER, Side.RIGHT]:
                 if assignment.side == side and assignment.blitz:
-                    self._rushes[side] += 0.9 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
-                                   * self.form_adjustment(i) * (1 if side != Side.CENTER else 0.8 / 0.9)
+                    count[side] += 1
+                    self._rushes[side] += (0.8 if side == Side.CENTER else 0.9) * self.rush_addition(self.match.state.cur_def_players[i][0]) \
+                                   * self.form_adjustment(i)
                 elif (side == Side.CENTER or assignment == Side.CENTER) and assignment.blitz:
                     self._rushes[side] += 0.1 * self.rush_addition(self.match.state.cur_def_players[i][0]) \
                                        * self.form_adjustment(i)
+        for side in [Side.LEFT, Side.CENTER, Side.RIGHT]:
+            self._rushes[side] = round(self._rushes[side] * (1 - min(count[side] - 1, 6) / 10))
