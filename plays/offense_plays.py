@@ -28,6 +28,10 @@ class OffensePlay:
         return self._name
 
     @property
+    def routes(self):
+        return self._assignments
+
+    @property
     def side(self):
         return self._direction
 

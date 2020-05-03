@@ -8,20 +8,22 @@ class Coverage:
         self._area = area
         self._target = target
         self._blitz = blitz
+        self._target_area = area
 
     def amend_area(self, routes: RouteCombo):  # Run this for each if area is None at start of a play?
-        # TODO: This doesn't gel with running plays as is.  That needs to change, make a generic Run route?
-        if self._area is None:
-            if type(routes.assignments[self._target]) == FieldLocation:
-                self._area = routes.assignments[self._target]
+         if self._area is None:
+            if not routes.assignments[self._target].blocking:
+                self._target_area = routes.assignments[self._target]
             else:  # If receiver is blocking then blitz
-                self._area = BACK_CENTER
+                self._target_area = BACK_CENTER
                 self._target = GenOff.QB
                 self._blitz = True
 
     @property
     def area(self):
-        return self._area
+        if self._area is not None:
+            return self._area
+        return self._target_area
 
     @property
     def target(self):

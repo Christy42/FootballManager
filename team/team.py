@@ -1,5 +1,6 @@
 import yaml
 import random
+from copy import deepcopy
 
 from utils import get_pos
 from enums import OffenseFormation, DefenseFormation, Position, GenOff
@@ -77,11 +78,11 @@ class MatchTeam(BaseTeam):
         print(self._tactics["offense"])
         choice = random.choices(list(self._tactics["offense"][down].keys()),
                                 weights=list(self._tactics["offense"][down].values()))
-        return OFF_PLAY_LIST[choice[0]]
+        return deepcopy(OFF_PLAY_LIST[choice[0]])
 
     def choose_play_defense(self):
         choice = random.choices(list(self._tactics["defense"].keys()), weights=list(self._tactics["defense"].values()))
-        return DEF_PLAY_LIST[choice[0]]
+        return deepcopy(DEF_PLAY_LIST[choice[0]])
 
     def choose_offense(self, formation: of.OffenseFormation):
         # how are we ordering this.  Kind of want to do the optional stuff first.  Still just assuming it works

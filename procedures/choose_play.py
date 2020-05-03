@@ -22,6 +22,7 @@ class ChoosePlay(Procedure):
         super().__init__(match)
 
     def step(self):
+        # TODO: Defense should depend on offense formation
         if self.match.state.possession == 0:
             self.match.state.cur_off_play = self.match.state.team_1.choose_play_offense(self.match.state.down, self.match.state.kicking)
             self.match.state.cur_def_play = self.match.state.team_2.choose_play_defense()

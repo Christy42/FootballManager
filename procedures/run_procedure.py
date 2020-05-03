@@ -68,15 +68,6 @@ class YBCRun(Procedure):
         else:
             temp_value = temp[side]
         self.match.state.add_temp_yards(temp_value)
-        print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG")
-        print(self._rushes)
-        print(self._blocks)
-        print([self._rushes[side] / (self._rushes[side] + self._blocks[side] * amend + randint(0, 1000)) for side in [Side.LEFT, Side.CENTER, Side.RIGHT]])
-        print(temp)
-        print(temp_value)
-        print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG")
-
-        # TODO: how do we figure the yards??
 
     @staticmethod
     def block_addition(player):
@@ -94,7 +85,7 @@ class YBCRun(Procedure):
                 if assignment.side == side and assignment.blocking:
                     count[side] += 1
                     self._blocks[side] += (0.8 if side == Side.CENTER else 0.9) * \
-                                           self.block_addition(self.match.state.cur_off_players[i][0])
+                        self.block_addition(self.match.state.cur_off_players[i][0])
                 elif (assignment.side == Side.CENTER or side == Side.CENTER) and assignment.blocking:
                     self._blocks[side] += 0.1 * self.block_addition(self.match.state.cur_off_players[i][0])
         for side in [Side.LEFT, Side.CENTER, Side.RIGHT]:
