@@ -119,6 +119,7 @@ class GameState:
         print("loc " + str(self._ball_location))
         print("possession " + str(self._possession))
         print("down " + str(self._down))
+        print("movement " + str(self._temp_yards))
         if self._ball_location >= self._first_down_marker:
             self._first_down_marker = min(100, self._ball_location + 10)
             self.reset_down()

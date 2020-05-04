@@ -52,18 +52,13 @@ class Test:
             # Check the next item on the stack and run it.
             # TODO: Need to remove requirement for KickOff
             self.state.kicking = False
-            if type(self.state.peek) in [FullPlay, Restart, EndPlay, ChoosePlayers, ChoosePlay, CoinFlip, RunPlay, YBCRun, Run]:
-                proc = self.state.peek
-            else:
-                print("skip")
-                print(self.state.peek)
-                self.state.pop()
-                continue
+            proc = self.state.peek
+
             # Do action
             self.state.pop()
             # TODO: Each action should affect the game clock and the ball location
             # TODO: Do we need something checking the game clock for end of game / half etc.?
-            print(proc)
+            # print(proc)
             proc.step()
 
 
@@ -75,6 +70,8 @@ class GameState:
         self._stack = Stack()
         self._possession = None
         self._ball_location = 35
+        self._tackles = 0
+        self._tackles_broken = 0
         self._first_down_marker = 45
         self._team_1 = team_1
         self._team_2 = team_2
@@ -95,6 +92,7 @@ class GameState:
         self.cur_off_players = {}
         self.cur_def_players = []
         self.kicking = False
+        self._max_run = 0
 
     def set_qb_time(self, value):
         self._qb_time = value
@@ -135,10 +133,12 @@ class GameState:
         print("THIS Updates everything")
         self._yards_counted += self._temp_yards
         print(self._yards_counted)
+        print(self._temp_yards)
+        self._max_run = max(self._max_run, self._temp_yards)
         self._ball_location = 35
         self._temp_yards = 0
         self._actions_done += 1
-        if self._actions_done == 1000:
+        if self._actions_done == 10000:
             self._stack.empty_out()
         self.tackler = 0
         self._qb_time = 0
@@ -281,3 +281,7 @@ print("XXXX")
 # Need to ensure this is limited to just the run actions
 print(b.state._actions_done)
 print(b.state._yards_counted / b.state._actions_done)
+print(b.state._tackles_broken / b.state._tackles)
+print(b.state._tackles)
+print(b.state._tackles_broken)
+print(b.state._max_run)

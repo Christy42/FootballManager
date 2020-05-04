@@ -14,15 +14,19 @@ class YAC(Procedure):  # Yards after contact
 
     def step(self):
         tackling = (self._tackler.strength + self._tackler.tackling + self._tackler.elusiveness) / 3
-        runner = (self._runner.strength + self._runner.carrying + self._runner.elusiveness) / 3
-        if tackling / (runner + tackling) > random():
+        runner = (self._runner.strength + 5 * self._runner.carrying + self._runner.elusiveness) / 3
+        if tackling / (runner + tackling) > random() * 2:
             temp = 0
-        elif 0.5 > random():
+        elif tackling / (runner + tackling) > random() * 2:
             temp = 1
-        elif 0.66 > random():
+        elif 0.4 > random():
             temp = 2
-        else:
+        elif 0.6 > random():
             temp = 3
+        else:
+            temp = 4
+        print("temp")
+        print(temp)
         self.match.state.add_temp_yards(temp)
 
 
@@ -37,20 +41,20 @@ class Tackling(Procedure):
 
     def step(self):
         # broken tackle - needs more yards from a tackle
-        tackle_value = 30 * self._tackler.tackling + 18 * self._tackler.strength + 15 * self._tackler.elusiveness + \
+        tackle_value = 28 * self._tackler.tackling + 18 * self._tackler.strength + 15 * self._tackler.elusiveness + \
                        7 * self._tackler.speed
-        runner_value = self._runner.strength * 3 + self._runner.carrying + 2 * self._runner.elusiveness + \
+        runner_value = self._runner.strength * 2 + 3 * self._runner.carrying + 2 * self._runner.elusiveness + \
             self._runner.speed
-        if random() > tackle_value / (tackle_value + runner_value) and self._tackle_att < 3:
-            # Extra yards, new tackler
-            # Extra yards should take into account new tackler
+        # self.match.state._tackles += 1
+        if random() > tackle_value / (tackle_value + runner_value) and self._tackle_att < 4:
+            # self.match.state._tackles_broken += 1
             Tackling(self.match, self._runner, rush=self._rush, tackle_att=self._tackle_att+1)
         else:
             # Tackle and maybe a fumble
             Fumble(self.match, self._runner, self._tackler)
 
     def get_tackler(self, rush=False):
-        # TODO: Need to deal with different scenarios from run though
+        # TODO: Later but attempts going to the house!
         sec_layer = True if self.match.state.temp_yards > 2 else False
         points = [0] * 11
         off_key = {self.match.state.cur_off_players[a][0]: a for a in self.match.state.cur_off_players}
@@ -69,13 +73,13 @@ class Tackling(Procedure):
             if assign.target is not None and assign.target == self._runner:
                 points[i] += 25 + randint(0, 20)
         arg_max = lambda j: points[j]
-        tackler = self.match.state.cur_def_players[max(range(len(points)), key=arg_max)]
+        tackler = self.match.state.cur_def_players[max(range(len(points)), key=arg_max)][0]
         dist = self.match.state.cur_def_play.assignments[max(range(len(points)), key=arg_max)].area.\
             distance(self.match.state.cur_off_play.assignments[off_key[self._runner]].field_loc)
-        if rush:
+        if rush and self._tackle_att == 1:
             temp_dist = 0
         else:
-            temp_dist = 1 + repeated_random(dist * 2 + 1, self._runner.speed / (self._runner.speed + tackler.speed))
+            temp_dist = 1 + repeated_random(int(dist * 2 + 3), self._runner.speed / (self._runner.speed + tackler.speed))
         self.match.state.add_temp_yards(temp_dist)
         return max(range(len(points)), key=arg_max)
 

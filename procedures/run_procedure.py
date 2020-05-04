@@ -33,7 +33,7 @@ class YBCRun(Procedure):
         temp = {Side.LEFT: 0, Side.CENTER: 0, Side.RIGHT: 0}
         for side in [Side.LEFT, Side.CENTER, Side.RIGHT]:
             for i in range(-3, 6):
-                if random() < self._rushes[side] / (self._rushes[side] + self._blocks[side] * amend + randint(0, 1000)) or i == 5:
+                if random() < self._rushes[side] / (self._rushes[side] + self._blocks[side] * amend + randint(0, 1100)) or i == 5:
                     temp[side] = i
                     break
         side = self.match.state.cur_off_play.side
