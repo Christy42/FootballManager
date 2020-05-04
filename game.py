@@ -89,20 +89,6 @@ class GameState:
     def set_ball_loc(self, placement):
         self._ball_location = placement
 
-    #def set_players(self):
-        # Offense
-    #    for position in [Position.OT, Position.OG, Position.C, Position.WR, Position.TE, Position.FB, Position.QB,
-     #                    Position.P, Position.K, Position.G]:
-      #      for i in range(self.cur_off_play.formation.positions[position]):
-       #         self.cur_off_players.append(choices(self.offense.players[position],
-        #                                            self.offense.player_weights[position])[0])
-
-        #for position in [Position.DE, Position.DT, Position.OLB, Position.MLB, Position.CB, Position.S, Position.N,
-        #                 Position.KR, Position.PR]:
-        #    for i in range(self.cur_def_play.formation.positions[position]):
-        #        self.cur_def_players.append(choices(self.defense.players[position],
-         #                                           self.defense.player_weights[position])[0])
-
     def set_comm_values(self, outcome=None):
         self._outcome = outcome
 
@@ -233,9 +219,7 @@ class GameState:
 
     def add_time(self, time_used):
         dfa = self._time.increase_time(time_used)
-        print("dfa " + str(dfa))
         if dfa == 1:
-            print("The half is changing")
             self.set_possession((self._initial + 1) % 2)
             self.kicking = 1
 
@@ -313,7 +297,6 @@ class GameTime:
             self._quarter += 1
             print("quarter " + str(self._quarter))
             if self._quarter == 3:
-                print("XChange")
                 self._half += 1
                 return 1
                 # TODO: How to reset the half????

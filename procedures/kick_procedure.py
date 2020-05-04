@@ -10,7 +10,6 @@ class KickOff(Procedure):
         super().__init__(match)
 
     def step(self):
-        print(len(self.match.state.cur_off_players))
         kicker = self.match.state.cur_off_players[GenOff.QB][0]
         returner = self.match.state.cur_def_players[10][0]
         self.match.state.kicking = False
@@ -20,7 +19,6 @@ class KickOff(Procedure):
         # TODO: How and when to call this, probably in coin flip and after TDs, Kicks
         self.match.state.blue_flag()
         if distance > 85 or (distance > 75 and returner.speed < 500):
-            print("stable")
             self.match.state.set_ball_loc(75)
         else:
             return_dist = max(0, round(returner.speed / 100) + random.randint(5, 20) - 5
@@ -58,7 +56,6 @@ class Punt(Procedure):
         # TODO: How and when to call this, probably in coin flip and after TDs, Kicks
         self.match.state.blue_flag()
         if distance > 100:
-            print("stable")
             if random.random() * 2000 > 1000 + punter.punt:
                 self.match.state.set_ball_loc(80)
             else:

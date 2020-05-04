@@ -11,9 +11,9 @@ class Coverage:
         self._target_area = area
 
     def amend_area(self, routes: RouteCombo):  # Run this for each if area is None at start of a play?
-         if self._area is None:
+        if self._area is None:
             if not routes.assignments[self._target].blocking:
-                self._target_area = routes.assignments[self._target]
+                self._target_area = routes.assignments[self._target].field_loc
             else:  # If receiver is blocking then blitz
                 self._target_area = BACK_CENTER
                 self._target = GenOff.QB

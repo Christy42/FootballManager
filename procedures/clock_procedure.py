@@ -5,6 +5,15 @@ from enums import PlayStyle
 from procedures.kick_procedure import KickOff, Punt, Kick
 
 
+class AssignDefense(Procedure):
+    def __init__(self, match):
+        super().__init__(match)
+
+    def step(self):
+        for i in range(len(self.match.state.cur_def_players)):
+            self.match.state.cur_def_play.assignments[i].amend_area(self.match.state.cur_off_play.routes)
+
+
 class EndQuarter(Procedure):
     def __init__(self, match):
         super().__init__(match)
@@ -73,3 +82,4 @@ class RunPlay(Procedure):
                 Punt(self.match)
             else:
                 Kick(self.match)
+        AssignDefense(self.match)

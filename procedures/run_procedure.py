@@ -14,34 +14,8 @@ class Run(Procedure):
         self._blockers = []
 
     def step(self):
-        # TODO: How to figure tackler
-        Tackling(self.match, self.match.state.cur_off_players[self.match.state.cur_off_play.runner],
-                 self.match.state.cur_def_players[self.get_tackler()])
+        Tackling(self.match, self.match.state.cur_off_players[self.match.state.cur_off_play.runner][0], rush=True)
         YBCRun(self.match)
-
-    def get_tackler(self):
-        # TODO: Need to assign the man defenders to a location
-        sec_layer = True if self.match.state.temp_yards > 2 else False
-        points = [0] * 11
-        for i in range(len(self.match.state.cur_def_play.assignments)):
-            assign = self.match.state.cur_def_play.assignments[i]
-            points[i] += randint(0, 30)
-            if assign.blitz:
-                points[i] += 10 + randint(0, 10) - sec_layer * randint(0, 20)
-            if self.match.state.cur_off_play.side == Side.LEFT and assign.side in [Side.LEFT, Side.CENT_L]:
-                points[i] += 10
-            elif self.match.state.cur_off_play.side == Side.RIGHT and assign.side in [Side.RIGHT, Side.CENT_R]:
-                points[i] += 10
-            elif self.match.state.cur_off_play.side == Side.CENTER and assign.side == Side.CENTER:
-                points[i] += 10
-            if assign.depth in [Depth.SHORT, Depth.BACK]:
-                points[i] += 5 + randint(0, 6)
-            elif assign.depth in [Depth.MID, Depth.DEEP]:
-                points[i] -= 5 - randint(0, 6)
-            if assign.target is not None and self.match.state.cur_off_play.assignments[assign.target].rusher:
-                points[i] += 25 + randint(0, 20)
-        arg_max = lambda j: points[j]
-        return max(range(len(points)), key=arg_max)
 
 
 # TODO: I mean, returns a number but doesn't do very much???

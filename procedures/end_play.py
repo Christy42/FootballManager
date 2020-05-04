@@ -8,10 +8,8 @@ class EndPlay(Procedure):
 
     def step(self):
         # TODO: Need to turn temp yards into real yards, recalculate down and distance.  Deal with TD/ Safety
-        print("result")
-        print(self.match.state._time.game_time)
-        print(self.match.state._time.quarter)
-        print("end_res")
+        print("quarter " + str(self.match.state._time.game_time))
+        print("quarter " + str(self.match.state._time.quarter))
         self.match.state.end_play_checks()
         if self.match.state._time.quarter >= 5:
             EndGame(self.match)

@@ -53,9 +53,9 @@ class OffensePlay:
 # Seems much much cleaner.  Even if there is only one or two blocking styles.  Think on it
 
 
-OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN, CENTER_RUN, Side.CENTER, GenOff.REC4,
+OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN, CENTER_RUN, Side.CENTER, GenOff.REC5,
                                              "Man Center Run", "Man Center Run"),
-                 "DriveSingleback": OffensePlay(SINGLEBACK, PlayStyle.PASS, DRIVE_SINGLEBACK, Side.CENTER, GenOff.REC4,
+                 "DriveSingleback": OffensePlay(SINGLEBACK, PlayStyle.PASS, DRIVE_SINGLEBACK, Side.CENTER, GenOff.REC5,
                                                 "Singleback Drive", "Singleback Drive"),
                  "KickOff": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
                                         KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Kick Off", "Kick Off"),
