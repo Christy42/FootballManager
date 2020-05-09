@@ -3,6 +3,8 @@ from enums import Side, GenOff
 from utils import combine_values, repeated_random
 # import game as g
 
+from plays.route import *
+
 
 class RouteRun(Procedure):
     def __init__(self, match):
@@ -47,18 +49,18 @@ class PassBlock(Procedure):
         # TODO: Need to return these times somewhere going forward
 
     def _blocks(self) -> dict:
-        blocks = {OffAssign.LEFT_BLOCK: [], OffAssign.CENTER_BLOCK: [], OffAssign.RIGHT_BLOCK: []}
-        for side in [OffAssign.LEFT_BLOCK, OffAssign.CENTER_BLOCK, OffAssign.RIGHT_BLOCK]:
+        blocks = {Side.LEFT: [], Side.CENTER: [], Side.RIGHT: []}
+        for side in [Side.LEFT, Side.CENTER, Side.RIGHT]:
             for i in GenOff:
                 player = self.match.state.cur_off_players[i]
-                if self.match.state.cur_off_play.assignments[i] == side:
+                if self.match.state.cur_off_play.assignments[i].side == side:
                     blocks[side].append((player.block * 6 * player.burst / 1000 + 3 * player.strength +
                                          player.positioning * player.burst / 1000) /
                                         (13 + 5 if random.random() > 0.9 else 0 - 5 if random.random() < 0.1 else 0 +
                                          0.5 if random.random() > 0.95 else 0 - 0.5 if random.random() < 0.05 else 0))
-        return {Side.LEFT: combine_values(blocks[OffAssign.LEFT_BLOCK]),
-                Side.CENTER: combine_values(blocks[OffAssign.CENTER_BLOCK]),
-                Side.RIGHT: combine_values(blocks[OffAssign.RIGHT_BLOCK])}
+        return {Side.LEFT: combine_values(blocks[Side.LEFT]),
+                Side.CENTER: combine_values(blocks[Side.CENTER]),
+                Side.RIGHT: combine_values(blocks[Side.RIGHT])}
 
     def _rush(self) -> dict:
         rushes = {Side.LEFT: [], Side.CENTER: [], Side.RIGHT: []}
@@ -79,7 +81,7 @@ class PassBlock(Procedure):
         vision_scan = Side.LEFT if effect[0] == max(effect) else Side.CENTER if effect[1] == max(effect) else Side.Right
 
         for i in GenOff:
-            if self.match.state.cur_off_play.assignments[i] == OffAssign.SCAN_BLOCK:
+            if self.match.state.cur_off_play.assignments[i] == BLOCK_SCAN:
                 player = self.match.state.cur_def_players[i]
                 block[vision_scan] += (player.vision * player.block * player.positioning / 6000000 +
                                        player.strength * player.positioning / 6000) if random() * 2000 < \
@@ -107,11 +109,14 @@ class PassBlock(Procedure):
 
 
 class Pass(Procedure):
-    def __init__(self, match):
+    def __init__(self, match, receiver):
         super().__init__(match)
+        self._receiver = receiver
 
     def step(self):
-        if random.random() > 0.5:
+        distance = BACK_CENTER.distance(self.match.state.cur_off_players[self._receiver].route.field_loc)
+        # TODO: Use passing, distance from QB, awareness for accuracy, coverage values for difficulty
+        if distance > self.match.state.cur_off_players[GenOff.QB].passing:
             pass
         else:
             pass
@@ -128,12 +133,21 @@ class DecisionMade(Procedure):
         qb_time -= random() / 2 * (1 - qb.awareness / 1000)
         # Figure out right route.
         r_values = {}
-        multi = 50
+        multi = 50  # used to favour initial reads
         for i in self.match.state.cur_off_play.route.reads:
             r_values.update({i: self.match.state.route_effect[i] * multi * (random() / 2 + 0.5)})
             multi = multi * 0.75
         r_values = {a: r_values[a] / sum(r_values.values()) for a in r_values}
         read = max(r_values, key=r_values.get)
+        # Look to checkdown
+        if max(r_values) < 100:
+            # TODO: Adjust these numbers
+            # Take sack
+            if min(times) < 1.5:
+                self.match.state.add_temp_yards(-5)
+                return
+            Pass(self.match, self.match.state.cur_off_play.route.checkdown)
+        Pass(self.match, read)
         # Need time QB has
         # Need the time the routes take
         # Check reads, work out which is right (50, 30, 20) or (60, 40) of them being the right read) or dump off

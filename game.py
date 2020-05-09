@@ -66,9 +66,11 @@ class GameState:
         self._team_1_pace = 25
         self._team_2_pace = 25
         self._down = 1
-        self.routes_ran = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
+        self._coverages = {}
+        self.routes_effect = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
         self._turnover = 0
         self._temp_yards = 0
+        self._pass_effect = 0
         self._outcome = None
         self._reports = []
         self.cur_off_play = None
@@ -128,7 +130,15 @@ class GameState:
         self._temp_yards = 0
         self.tackler = 0
         self._qb_time = 0
-        self.routes_ran = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
+        self.routes_effect = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
+        self._pass_effect = 0
+
+    def set_pass_effect(self, value):
+        self._pass_effect = value
+
+    @property
+    def pass_effect(self):
+        return self._pass_effect
 
     def end_play_checks(self):
         self.flush_temp_yards()

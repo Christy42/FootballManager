@@ -28,6 +28,7 @@ class FieldLocation:
 # All done from offense point of view
 # Back -5 -> 0, SHORT 1 -> 5, MID 6 -> 10, LONG 11 -> 15, FAR 16 -> 20, DEEP -> 21 - 25
 BACK_RIGHT = FieldLocation(Depth.BACK, Side.RIGHT, -2)
+BACK_SCAN = FieldLocation(Depth.BACK, Side.SCAN, -2)
 BACK_CENT_R = FieldLocation(Depth.BACK, Side.CENT_R, -2)
 BACK_CENTER = FieldLocation(Depth.BACK, Side.CENTER, -2)
 BACK_CENT_L = FieldLocation(Depth.BACK, Side.CENT_L, -2)

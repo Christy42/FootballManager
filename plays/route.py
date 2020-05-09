@@ -48,7 +48,7 @@ class RouteCombo:
 BLOCK_LEFT = SingleRoute(field_loc=BACK_LEFT, blocking=True)
 BLOCK_CENTER = SingleRoute(field_loc=BACK_CENTER, blocking=True)
 BLOCK_RIGHT = SingleRoute(field_loc=BACK_RIGHT, blocking=True)
-# BLOCK_SCAN = SingleRoute(side=Side.SCAN, blocking=True)
+BLOCK_SCAN = SingleRoute(field_loc=BACK_SCAN, blocking=True)
 RUN_LEFT = SingleRoute(field_loc=BACK_LEFT, rusher=True)
 RUN_CENTER = SingleRoute(field_loc=BACK_CENTER, rusher=True)
 RUN_RIGHT = SingleRoute(field_loc=BACK_RIGHT, rusher=True)
