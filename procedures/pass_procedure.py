@@ -15,24 +15,33 @@ class RouteRun(Procedure):
         # Take the final target by themselves.  Combine the rest a bit.
         # Work out check_down
         routes_effect = {a: 0 for a in self.match.state.cur_off_play.route.reads}
+        cov_effect = {a: 0 for a in self.match.state.cur_off_play.route.reads}
+        delayed_cover = False
         for i in self.match.state.cur_off_play.route.reads:
+            receiver = self.match.state.cur_off_players[i]
+            coverage_pl = []
+            for j in range(len(self.match.state.cur_def_players)):
+                if self.match.state.cur_def_play.assignments[j].area == self.match.state.cur_off_play.route.assignments[i].field_loc:
+                    coverage_pl.append(i)
+            if len(coverage_pl) == 0:
+                delayed_cover = True  # coverage late getting there
+                for j in range(len(self.match.state.cur_def_players)):
+                    if self.match.state.cur_def_play.assignments[j].area.distance(self.match.state.cur_off_play.route.assignments[i].field_loc) <= 2:
+                        coverage_pl.append(i)
             dist_effect = round(self.match.state.cur_off_play.route.assignments[i].value / 5) + 2
-            routes_effect[i] += (self.match.state.cur_off_players[i].speed * dist_effect +
-                                 (8 - dist_effect) * self.match.state.cur_off_players[i].route_running) / 8
-            # Need Coverage
-            # Surely type of route should affect this heavily?  Maybe base off the level it goes to?
-            # Or just get what you can done
+            routes_effect[i] += (receiver.speed * dist_effect + (8 - dist_effect) * receiver.elusiveness +
+                                 receiver.awareness * 2 + receiver.route_running * 6) / 16
             for j in range(len(self.match.state.cur_off_play.route.reads)):
                 if i != j:
-                    dist_effect = round(self.match.state.cur_off_play.route.assignments[i].value / 5) + 2
-                    routes_effect[i] += (self.match.state.cur_off_players[i].speed * dist_effect +
-                                         (8 - dist_effect) * self.match.state.cur_off_players[i].route_running) / 32
-                    # helping out
+                    routes_effect[i] += (receiver.speed * dist_effect + (8 - dist_effect) * receiver.elusiveness +
+                                         receiver.awareness * 4 + receiver.route_running * 4) / 128
                     # Now I need to go from REC1 to Julio Jones or whoever
-        # Receiver 1-> some help from 2 and maybe 3
-        # Receiver 2, some help from 1 and maybe 3
-        # Receiver 3, some help from 1 and 2
-        self.match.state.route_effect = routes_effect
+            for k in coverage_pl:
+                defender = self.match.state.cur_def_players[k]
+                cov_effect[i] += (defender.awareness * 2 + defender.speed * dist_effect + defender.coverage * 6 +
+                                  defender.elsuiveness + (8 - dist_effect)) / (16 + 16 * delayed_cover)
+        self.match.state.route_effect = {a: cov_effect[a] / (routes_effect[a] + cov_effect[a])
+                                         for a in self.match.state.cur_def_play.route.reads}
 
 
 class PassBlock(Procedure):
@@ -115,10 +124,10 @@ class Pass(Procedure):
 
     def step(self):
         distance = BACK_CENTER.distance(self.match.state.cur_off_players[self._receiver].route.field_loc)
-        # TODO: Use passing, distance from QB, awareness for accuracy, coverage values for difficulty
-        # set passing difficulty
-        # set passing range difficulty
-        self.match.state.set_pass_effect(0)
+        qb = self.match.state.cur_off_players[GenOff.QB]
+        effect = qb.passing - distance * (100 + randint(50, 150))
+        effect += qb.passing + qb.awareness - self.match.state.route_effect[self._receiver] * 20000 + randint(-100, 100)
+        self.match.state.set_pass_effect(effect)
 
 
 class DecisionMade(Procedure):
