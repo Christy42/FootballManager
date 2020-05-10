@@ -116,10 +116,9 @@ class Pass(Procedure):
     def step(self):
         distance = BACK_CENTER.distance(self.match.state.cur_off_players[self._receiver].route.field_loc)
         # TODO: Use passing, distance from QB, awareness for accuracy, coverage values for difficulty
-        if distance > self.match.state.cur_off_players[GenOff.QB].passing:
-            pass
-        else:
-            pass
+        # set passing difficulty
+        # set passing range difficulty
+        self.match.state.set_pass_effect(0)
 
 
 class DecisionMade(Procedure):
