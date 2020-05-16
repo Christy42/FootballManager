@@ -71,6 +71,7 @@ class GameState:
         self._possession = None
         self._ball_location = 35
         self._tackles = 0
+        self.stats = {}
         self._tackles_broken = 0
         self._first_down_marker = 45
         self._team_1 = team_1
@@ -78,6 +79,7 @@ class GameState:
         self._time = GameTime()
         self._qb_time = 0
         self._team_1_pace = 25
+        self._pass_effect = 0
         self._team_2_pace = 25
         self._down = 1
         self.routes_ran = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
@@ -216,6 +218,13 @@ class GameState:
 
     def append_report(self, item):
         self._reports.append(item)
+
+    def set_pass_effect(self, value):
+        self._pass_effect = value
+
+    @property
+    def pass_effect(self):
+        return self._pass_effect
 
     @property
     def peek(self):

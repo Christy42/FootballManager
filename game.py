@@ -3,7 +3,7 @@ import math
 from random import randint
 
 from stack import Stack
-from enums import Possession, PlayStyle, GenOff
+from enums import Possession, PlayStyle, GenOff, Side
 from team.team import MatchTeam
 from procedures.total_play import FullPlay
 
@@ -62,7 +62,7 @@ class GameState:
         self._team_1 = team_1
         self._team_2 = team_2
         self._time = GameTime()
-        self._qb_time = 0
+        self._qb_time = {Side.LEFT: 0, Side.RIGHT: 0, Side.CENTER: 0}
         self._team_1_pace = 25
         self._team_2_pace = 25
         self._down = 1
@@ -71,6 +71,7 @@ class GameState:
         self._turnover = 0
         self._temp_yards = 0
         self._pass_effect = 0
+        self.stats = {}
         self._outcome = None
         self._reports = []
         self.cur_off_play = None
@@ -80,6 +81,9 @@ class GameState:
         self.cur_off_players = {}
         self.cur_def_players = []
         self.kicking = False
+
+    def set_pass_effect(self, value):
+        self._pass_effect = value
 
     def set_qb_time(self, value):
         self._qb_time = value
@@ -132,9 +136,6 @@ class GameState:
         self._qb_time = 0
         self.routes_effect = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
         self._pass_effect = 0
-
-    def set_pass_effect(self, value):
-        self._pass_effect = value
 
     @property
     def pass_effect(self):

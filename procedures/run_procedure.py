@@ -14,7 +14,9 @@ class Run(Procedure):
         self._blockers = []
 
     def step(self):
-        Tackling(self.match, self.match.state.cur_off_players[self.match.state.cur_off_play.runner][0], rush=True)
+        print("Tackling")
+        print(self.match.state.cur_off_play.runner)
+        Tackling(self.match, self.match.state.cur_off_play.runner, rush=True)
         YBCRun(self.match)
 
 

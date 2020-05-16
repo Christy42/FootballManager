@@ -29,11 +29,11 @@ class PlayerBase:
 class MatchPlayer(PlayerBase):
     def __init__(self, passing, tackling, elusiveness, strength, speed, catching, punting, vision, fitness, weight,
                  height, age, optimal_age, coverage, blocking, awareness, route_running, carrying, rushing, kicking,
-                 burst, name, id_no):
+                 burst, name, id_no, positioning):
         super().__init__(name, id_no)
         self.attributes = MatchAttributes(passing, tackling, elusiveness, strength, speed, catching, punting, vision,
                                           fitness, weight, burst, height, age, optimal_age, coverage, blocking,
-                                          carrying, route_running, awareness, rushing, kicking)
+                                          carrying, route_running, awareness, rushing, kicking, positioning)
         self.state = PlayerState()
 
     @classmethod
@@ -44,7 +44,7 @@ class MatchPlayer(PlayerBase):
                    stats["CATCHING"], stats["PUNT"], stats["VISION"], stats["FITNESS"], stats["WEIGHT"],
                    stats["HEIGHT"], stats["AGE"], stats["OPTIMAL_AGE"], stats["COVERAGE"], stats["BLOCKING"],
                    stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["RUSHING"], stats["KICK"],
-                   stats["BURST"], stats["NAME"], stats["ID"])
+                   stats["BURST"], stats["NAME"], stats["ID"], stats["POSITIONING"])
 
     @property
     def speed(self):
@@ -55,12 +55,36 @@ class MatchPlayer(PlayerBase):
         return self.attributes.catching
 
     @property
+    def burst(self):
+        return self.attributes.burst
+
+    @property
+    def positioning(self):
+        return self.attributes.positioning
+
+    @property
     def punt(self):
         return self.attributes.speed
 
     @property
     def strength(self):
         return self.attributes.strength
+
+    @property
+    def awareness(self):
+        return self.attributes.awareness
+
+    @property
+    def route_running(self):
+        return self.attributes.route_running
+
+    @property
+    def coverage(self):
+        return self.attributes.coverage
+
+    @property
+    def passing(self):
+        return self.attributes.passing
 
     @property
     def kicking(self):

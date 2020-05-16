@@ -11,6 +11,10 @@ class SingleRoute:
         self.route = route
 
     @property
+    def yards(self):
+        return self.field_loc.yards
+
+    @property
     def side(self):
         return self.field_loc.side
 
@@ -30,6 +34,10 @@ class RouteCombo:
         self._reads = reads
         self._checkdown = checkdown
         self._yards = {a: 0 if type(a) != FieldLocation else a.yards for a in self._assignments}
+
+    @property
+    def yards(self):
+        return self._yards
 
     @property
     def reads(self):
