@@ -33,7 +33,11 @@ class RouteCombo:
         self._timing = timing
         self._reads = reads
         self._checkdown = checkdown
-        self._yards = {a: 0 if type(a) != FieldLocation else a.yards for a in self._assignments}
+        self._yards = {a: assignments[a].yards for a in self._assignments}
+
+    @property
+    def checkdown(self):
+        return self._checkdown
 
     @property
     def yards(self):

@@ -1,4 +1,5 @@
 {
-    offense: {1: {ManCenterRun: 0, DriveSingleback: 100}, 2: {ManCenterRun: 0, DriveSingleback: 100}, 3: {DriveSingleback: 100}, 4: {Punt: 100}},
+    offense: {1: {ManCenterRun: 0, DriveSingleback: 100}, 2: {ManCenterRun: 0, DriveSingleback: 100},
+              3: {ManCenterRun: 0, DriveSingleback: 100}, 4: {Punt: 100}},
     defense: {Cover2Man: 100}
 }

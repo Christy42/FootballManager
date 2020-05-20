@@ -81,6 +81,14 @@ class GameState:
         self.cur_off_players = {}
         self.cur_def_players = []
         self.kicking = False
+        self._int_players = {}
+
+    @property
+    def int_players(self):
+        return self._int_players
+
+    def set_int_players(self, players):
+        self._int_players = players
 
     def set_pass_effect(self, value):
         self._pass_effect = value
@@ -136,6 +144,7 @@ class GameState:
         self._qb_time = 0
         self.routes_effect = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
         self._pass_effect = 0
+        self._int_players = {}
 
     @property
     def pass_effect(self):

@@ -95,6 +95,14 @@ class GameState:
         self.cur_def_players = []
         self.kicking = False
         self._max_run = 0
+        self._int_players = {}
+
+    @property
+    def int_players(self):
+        return self._int_players
+
+    def set_int_players(self, players):
+        self._int_players = players
 
     def set_qb_time(self, value):
         self._qb_time = value
@@ -144,6 +152,7 @@ class GameState:
             self._stack.empty_out()
         self.tackler = 0
         self._qb_time = 0
+        self._int_players = {}
         self.routes_ran = {GenOff.REC1: 0, GenOff.REC4: 0, GenOff.REC3: 0, GenOff.REC2: 0, GenOff.REC5: 0}
 
     def end_play_checks(self):
@@ -290,7 +299,5 @@ print("XXXX")
 # Need to ensure this is limited to just the run actions
 print(b.state._actions_done)
 print(b.state._yards_counted / b.state._actions_done)
-print(b.state._tackles_broken / b.state._tackles)
-print(b.state._tackles)
-print(b.state._tackles_broken)
-print(b.state._max_run)
+print(b.state.stats)
+print({a: b.state.stats[a] / 10000 for a in b.state.stats})

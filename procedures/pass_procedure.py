@@ -2,6 +2,7 @@ from procedures.tackling_procedures import *
 from enums import Side, GenOff
 from utils import combine_values, repeated_random
 # import game as g
+from random import choice
 
 from plays.route import *
 
@@ -17,18 +18,21 @@ class RouteRun(Procedure):
         routes_effect = {a: 0 for a in self.match.state.cur_off_play.routes.reads}
         cov_effect = {a: 0 for a in self.match.state.cur_off_play.routes.reads}
         delayed_cover = False
+        int_player = {a: None for a in self.match.state.cur_off_play.routes.reads}
+        int_player[self.match.state.cur_off_play.routes.checkdown] = None
         for i in self.match.state.cur_off_play.routes.reads:
             receiver = self.match.state.cur_off_players[i][0]
             coverage_pl = []
             for j in range(len(self.match.state.cur_def_players)):
                 if self.match.state.cur_def_play.assignments[j].area == self.match.state.cur_off_play.routes.assignments[i].field_loc:
                     coverage_pl.append(j)
+            if len(coverage_pl) > 0:
+                int_player[i] = choice(coverage_pl)
             if len(coverage_pl) == 0:
                 delayed_cover = True  # coverage late getting there
                 for j in range(len(self.match.state.cur_def_players)):
                     if self.match.state.cur_def_play.assignments[j].area.distance(self.match.state.cur_off_play.routes.assignments[i].field_loc) <= 2:
                         coverage_pl.append(j)
-            # TODO: Use actual distances here
             dist_effect = round(self.match.state.cur_off_play.routes.assignments[i].yards / 5) + 2
             routes_effect[i] += (receiver.speed * dist_effect + (8 - dist_effect) * receiver.elusiveness +
                                  receiver.awareness * 2 + receiver.route_running * 6) / 16
@@ -43,6 +47,9 @@ class RouteRun(Procedure):
                                   defender.elusiveness + (8 - dist_effect)) / (16 + 16 * delayed_cover)
         self.match.state.route_effect = {a: cov_effect[a] / (routes_effect[a] + cov_effect[a])
                                          for a in self.match.state.cur_off_play.routes.reads}
+        checkdown = self.match.state.cur_off_play.routes.checkdown
+        self.match.state.set_int_players(int_player)
+        self.match.state.route_effect[checkdown] = 1 - self.match.state.cur_off_players[checkdown][0].route_running / 1300 - 0.2
 
 
 class PassBlock(Procedure):
@@ -52,10 +59,23 @@ class PassBlock(Procedure):
     def step(self):
         block_values = self._blocks()
         rush_values = self._rush()
+
+        self.match.state.stats["left rush"] = self.match.state.stats.get("left rush", 0) + rush_values[Side.LEFT]
+        self.match.state.stats["center rush"] = self.match.state.stats.get("center rush", 0) + rush_values[Side.CENTER]
+        self.match.state.stats["right rush"] = self.match.state.stats.get("right rush", 0) + rush_values[Side.RIGHT]
         scan_blocks = self._scan(block_values, rush_values)
+        self.match.state.stats["left block"] = self.match.state.stats.get("left block", 0) + scan_blocks[Side.LEFT]
+        self.match.state.stats["center block"] = self.match.state.stats.get("center block", 0) + scan_blocks[Side.CENTER]
+        self.match.state.stats["right block"] = self.match.state.stats.get("right block", 0) + scan_blocks[Side.RIGHT]
         times = self._time_calculation(scan_blocks, rush_values)
+        self.match.state.stats["qb time1"] = self.match.state.stats.get("qb time1", 0) + min(times.values())
         qb_adj = self._qb_run(times)
         self.match.state.set_qb_time(min(qb_adj.values()))
+        self.match.state.stats["qb time"] = self.match.state.stats.get("qb time", 0) + min(qb_adj.values())
+        self.match.state.stats["left time"] = self.match.state.stats.get("left time", 0) + qb_adj[Side.LEFT]
+        self.match.state.stats["center time"] = self.match.state.stats.get("center time", 0) + qb_adj[Side.CENTER]
+        self.match.state.stats["right time"] = self.match.state.stats.get("right time", 0) + qb_adj[Side.RIGHT]
+
         # TODO: Need to return these times somewhere going forward
 
     def _blocks(self) -> dict:
@@ -81,7 +101,7 @@ class PassBlock(Procedure):
                 if assignment.side == side and assignment.blitz:
                     rushes[side].append((player.rushing * 6 * player.burst / 1000 + 3 * player.strength +
                                          player.speed * player.burst / 1000) /
-                                        (13 + (5 if random() > 0.9 else 0) - (5 if random() < 0.1 else 0) +
+                                        (10 + (5 if random() > 0.9 else 0) - (5 if random() < 0.1 else 0) +
                                          (0.5 if random() > 0.95 else 0) - (0.5 if random() < 0.05 else 0)))
         return {Side.LEFT: combine_values(rushes[Side.LEFT]), Side.CENTER: combine_values(rushes[Side.CENTER]),
                 Side.RIGHT: combine_values(rushes[Side.RIGHT])}
@@ -100,7 +120,10 @@ class PassBlock(Procedure):
 
     @staticmethod
     def _time_calculation(blocks: dict, rushes: dict) -> dict:
-        times = {a: repeated_random(32, blocks[a] / rushes[a]) / 10 + 1.8 for a in blocks}
+        print("AAAAAA")
+        print(blocks)
+        print({a: blocks[a] / rushes[a] for a in blocks})
+        times = {a: repeated_random(32, blocks[a] / (rushes[a] + blocks[a])) / 10 + 1.8 for a in blocks}
         return times
 
     def _qb_run(self, times: dict) -> dict:
@@ -136,6 +159,7 @@ class Passing(Procedure):
     def step(self):
         distance = BACK_CENTER.distance(self.match.state.cur_off_play.assignments[self._receiver].field_loc)
         qb = self.match.state.cur_off_players[GenOff.QB][0]
+        self.match.state.stats["distance"] = self.match.state.stats.get("distance", 0) + distance
         passing = qb.passing * (random() / 2 + 0.75)
         effect = max(min(125 - distance * 25 + (passing - 100) / 6 + randint(-6, 6), 150), 0)
         print("effect")
@@ -153,34 +177,40 @@ class DecisionMade(Procedure):
 
     def step(self):
         qb = self.match.state.cur_off_players[GenOff.QB][0]
-        times = self.match.state.cur_off_play.routes.timing
+        times = {a: self.match.state.cur_off_play.routes.timing[a] for a in self.match.state.cur_off_play.routes.timing
+                 if a in self.match.state.cur_off_play.routes.reads or
+                 a == self.match.state.cur_off_play.routes.checkdown}
         qb_time = self.match.state.qb_time
         qb_time -= random() / 2 * (1 - qb.awareness / 1000)
+        self.match.state.stats["qb_time"] = self.match.state.stats.get("qb_time", 0) + qb_time
+        self.match.state.stats["qb_times"] = self.match.state.stats.get("qb_times", 0) + 1
+        self.match.state.stats["times"] = self.match.state.stats.get("times", 0) + min(times.values())
+        self.match.state.stats["mtimes"] = self.match.state.stats.get("mtimes", 0) + max(times.values())
+        read_val = {a: 0 for a in self.match.state.cur_off_play.routes.reads}
+        for i in range(len(self.match.state.cur_off_play.routes.reads)):
+            read_val[self.match.state.cur_off_play.routes.reads[i]] = 100 - i * 25
+        read_val[self.match.state.cur_off_play.routes.checkdown] = 15
+        print(read_val)
+        read_val = {a: read_val[a] * (1.1 - self.match.state.route_effect[a]) for a in read_val}
+        read_val = {a: read_val[a] + (-200 if times[a] >= qb_time else 0) + (25 if times[a] + (1000 - qb.awareness) / 500 <= qb_time else 0) for a in read_val}
+        read_val["sack"] = 0
+        read_val = {a: read_val[a] + randint(0, 150 - int(qb.awareness / 10)) for a in read_val}
+        print(qb_time)
+        print(read_val)
+        print("XTimes")
+        print(times)
+
         # Figure out right route.
-        r_values = {}
-        multi = 50  # used to favour initial reads
-        for i in self.match.state.cur_off_play.routes.reads:
-            r_values.update({i: self.match.state.route_effect[i] * multi * (random() / 2 + 0.5)})
-            multi = multi * 0.75
-        r_values = {a: r_values[a] / sum(r_values.values()) for a in r_values}
-        read = max(r_values, key=r_values.get)
-        # Look to checkdown
-        if max(r_values.values()) < 0.3:
-            # TODO: Adjust these numbers
-            # Take sack
-            print("Sack check")
-            print(times)
-            print(r_values)
-            if min(times.values()) < qb_time:
-                # TODO: Eventually adjust sack times
-                self.match.state.add_temp_yards(-5)
-                return
-            Passing(self.match, self.match.state.cur_off_play.route.checkdown)
+        read = max(read_val, key=read_val.get)
+        print(read)
+        self.match.state.stats["pass attempt"] = self.match.state.stats.get("pass attempt", 0) + 1
+        if type(read) == str:
+            self.match.state.stats["sack"] = self.match.state.stats.get("sack", 0) + 1
+            # TODO: Fumble chance: eventually - not vital!!!
+            self.match.state.add_temp_yards(-5)
+            return
+        self.match.state.stats[read] = self.match.state.stats.get(read, 0) + 1
         Passing(self.match, read)
-        # Need time QB has
-        # Need the time the routes take
-        # Check reads, work out which is right (50, 30, 20) or (60, 40) of them being the right read) or dump off
-        # Call pass attempt or call sack (or call QB run eventually) or take? sack
 
 
 class AfterCatch(Procedure):
@@ -191,12 +221,31 @@ class AfterCatch(Procedure):
     def step(self):
         receiver = self.match.state.cur_off_players[self._rec][0]
         catch = random()
+        self.match.state.stats["catch attempt"] = self.match.state.stats.get("catch attempt", 0) + 1
+        self.match.state.stats["pass eff"] = self.match.state.stats.get("pass eff", 0) + self.match.state.pass_effect
+        self.match.state.stats["route eff"] = self.match.state.stats.get("route eff", 0) + self.match.state.route_effect[self._rec]
+        self.match.state.stats["route yards"] = self.match.state.stats.get("route yards", 0) + self.match.state.cur_off_play.routes.yards[self._rec]
+        if self.match.state.int_players[self._rec] is not None:
+            self.match.state.stats["int chance"] = self.match.state.stats.get("int chance", 0) + 1
+            defender = self.match.state.cur_def_players[self.match.state.int_players[self._rec]][0]
+            qb = self.match.state.cur_off_players[GenOff.QB][0]
+            print("TEST INT")
+            print(min(self.match.state.route_effect[self._rec] * defender.coverage / qb.passing * 0.45, 0.4) * min(self.match.state.route_effect[self._rec] * defender.coverage / qb.passing * 0.45, 0.4))
+            if random() <= min(self.match.state.route_effect[self._rec] * defender.coverage / qb.passing * 0.45, 0.4):
+                if random() <= min(self.match.state.route_effect[self._rec] * defender.coverage / qb.passing * 0.45,
+                                   0.3):
+                    self.match.state.stats["int"] = self.match.state.stats.get("int", 0) + 1
+                    self.match.state.blue_flag()
+                    self.match.state.add_temp_yards(self.match.state.cur_off_play.routes.yards[self._rec])
+                    return
         if catch > 0.98 or catch * 1000 > (receiver.catching + self.match.state.pass_effect) * \
-                self.match.state.route_effect[self._rec]:
-            self.match.state.stats["catch"] = self.match.state.stats.get("catch")
+                (1 - self.match.state.route_effect[self._rec]):
+            self.match.state.stats["drop"] = self.match.state.stats.get("drop", 0) + 1
             self.match.state.add_temp_yards(0)
         else:
             print("catch")
-            # TODO: How to decide on tackler
+            # TODO: Need a few potential yards from the pass / catch
+            self.match.state.stats["catch"] = self.match.state.stats.get("catch", 0) + 1
+            print(self.match.state.cur_off_play.routes.yards)
             self.match.state.add_temp_yards(self.match.state.cur_off_play.routes.yards[self._rec])
-            Tackling(self.match, self._rec, )
+            Tackling(self.match, self._rec)

@@ -28,6 +28,7 @@ class YAC(Procedure):  # Yards after contact
             temp = 4
         print("temp")
         print(temp)
+        self.match.state.stats["yac"] = self.match.state.stats.get("yac", 0) + temp
         self.match.state.add_temp_yards(temp)
 
 
@@ -52,9 +53,11 @@ class Tackling(Procedure):
             # self.match.state._tackles_broken += 1
             print("RETACKLE")
             print(self._runner)
-            Tackling(self.match, self._runner, rush=self._rush, tackle_att=self._tackle_att+1)
+            self.match.state.stats["broken tackle"] = self.match.state.stats.get("broken tackle", 0) + 1
+            Tackling(self.match, self._runner, rush=self._rush, tackle_att=self._tackle_att + 1)
         else:
             # Tackle and maybe a fumble
+            self.match.state.stats["tackle"] = self.match.state.stats.get("tackle", 0) + 1
             Fumble(self.match, self._runner, self._tackler)
 
     def get_tackler(self, rush=False):
@@ -101,6 +104,7 @@ class Fumble(Procedure):
         runner_value = self._run_val.strength * 2 + self._run_val.carrying + 500
         if random() < tackler_value / (25 * runner_value + tackler_value):
             if random() < 0.5:
+                self.match.state.stats["fumble"] = self.match.state.stats.get("fumble", 0) + 1
                 self.match.state.blue_flag()
         else:
             YAC(self.match, self._runner, self._tackler)

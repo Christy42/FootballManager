@@ -43,6 +43,7 @@ class YBCRun(Procedure):
             temp_value = temp[side] + sum([min(temp[a], 0) for a in [Side.LEFT, Side.CENTER, Side.RIGHT] if a != side]) / 2
         else:
             temp_value = temp[side]
+        self.match.state.stats["ybc"] = self.match.state.stats.get("ybc", 0) + temp_value
         self.match.state.add_temp_yards(temp_value)
 
     @staticmethod

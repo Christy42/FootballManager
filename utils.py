@@ -12,7 +12,7 @@ def repeated_randint(low, high, rolls):
 def repeated_random(number: int, odds: float) -> int:
     total = 0
     for i in range(number):
-        total = total + 1 if random() > odds else 0
+        total += 1 if random() <= odds else 0
     return total
 
 
