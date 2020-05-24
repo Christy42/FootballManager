@@ -11,7 +11,7 @@ class PlayerBase:
         self._id = id_no
 
     @classmethod
-    def from_file(cls, file_name):
+    def from_file(cls, file_name, tactics_dist):
         """
         This should be overwritten.  There is no base method for this function
         """
@@ -37,14 +37,16 @@ class MatchPlayer(PlayerBase):
         self.state = PlayerState()
 
     @classmethod
-    def from_file(cls, file_name):
+    def from_file(cls, file_name, tactics_dist=1):
         with open(file_name, "r") as file:
             stats = yaml.safe_load(file)
-        return cls(stats["PASSING"], stats["TACKLING"], stats["ELUSIVENESS"], stats["STRENGTH"], stats["SPEED"],
-                   stats["CATCHING"], stats["PUNT"], stats["VISION"], stats["FITNESS"], stats["WEIGHT"],
-                   stats["HEIGHT"], stats["AGE"], stats["OPTIMAL_AGE"], stats["COVERAGE"], stats["BLOCKING"],
-                   stats["AWARENESS"], stats["ROUTE_RUNNING"], stats["CARRYING"], stats["RUSHING"], stats["KICK"],
-                   stats["BURST"], stats["NAME"], stats["ID"], stats["POSITIONING"])
+        return cls(stats["PASSING"]*tactics_dist, stats["TACKLING"]*tactics_dist, stats["ELUSIVENESS"]*tactics_dist,
+                   stats["STRENGTH"]*tactics_dist, stats["SPEED"]*tactics_dist, stats["CATCHING"]*tactics_dist,
+                   stats["PUNT"]*tactics_dist, stats["VISION"]*tactics_dist, stats["FITNESS"]*tactics_dist,
+                   stats["WEIGHT"], stats["HEIGHT"], stats["AGE"], stats["OPTIMAL_AGE"], stats["COVERAGE"]*tactics_dist,
+                   stats["BLOCKING"]*tactics_dist, stats["AWARENESS"]*tactics_dist, stats["ROUTE_RUNNING"]*tactics_dist,
+                   stats["CARRYING"]*tactics_dist, stats["RUSHING"]*tactics_dist, stats["KICK"]*tactics_dist,
+                   stats["BURST"]*tactics_dist, stats["NAME"], stats["ID"], stats["POSITIONING"]*tactics_dist)
 
     @property
     def speed(self):
@@ -119,11 +121,6 @@ class PractisePlayer(MatchPlayer):
                          fitness, fitness_optimal, stamina, serve_aggression, second_serve_aggression,
                          aggression, tactic, name, id_no)
         self.attributes.strength.set_mult_value(randint(0, 20) + 80)
-        self.attributes.accuracy.set_mult_value(randint(0, 20) + 80)
-        self.attributes.shot_selection.set_mult_value(randint(0, 20) + 80)
-        self.attributes.mobility.set_mult_value(randint(0, 20) + 80)
-        self.attributes.serve.set_mult_value(randint(0, 20) + 80)
-        self.attributes.fitness.set_mult_value(randint(0, 20) + 100)
 
 
 class PlayerState:

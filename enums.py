@@ -158,3 +158,24 @@ class GenOff(Enum):
     OG_R = 9
     OT_R = 10
     QB = 11
+
+
+class Event(Enum):
+    TOUCHDOWN_RUN = 1
+    PASS = 2
+    INTERCEPTION = 3
+    RUN = 4
+    SAFETY = 5
+    FUMBLE = 6
+    FIRST_DOWN = 7
+    TKL = 8
+    SACK = 9
+    TOUCHDOWN_PASS = 10
+
+
+class TotalStyle(Enum):
+    RUN = 1
+    SHORT_PASS = 2
+    MEDIUM_PASS = 3
+    LONG_PASS = 4
+    SPECIAL = 5

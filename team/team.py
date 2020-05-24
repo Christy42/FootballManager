@@ -3,7 +3,7 @@ import random
 from copy import deepcopy
 
 from utils import get_pos
-from enums import OffenseFormation, DefenseFormation, Position, GenOff
+from enums import OffenseFormation, DefenseFormation, Position, GenOff, TotalStyle
 from team.player import MatchPlayer
 from plays.defense_plays import DEF_PLAY_LIST
 from plays.offense_plays import OFF_PLAY_LIST
@@ -12,6 +12,8 @@ from plays import offense_formation as of
 
 
 class BaseTeam:
+    base_value = {TotalStyle.RUN: 25, TotalStyle.LONG_PASS: 25, TotalStyle.MEDIUM_PASS: 25, TotalStyle.SHORT_PASS: 25}
+
     def __init__(self):
         pass
 
@@ -31,8 +33,10 @@ class MatchTeam(BaseTeam):
         # TODO: Need to actually upload the players.  Need to check rotas properly
         self.players = []
         self.state = TeamState()
+        self._tactics = tactics
+        tactics_dist = self.tactics_dist()
         for p in players:
-            self.players.append(MatchPlayer.from_file("sample//players//" + p + ".yaml"))
+            self.players.append(MatchPlayer.from_file("sample//players//" + p + ".yaml", tactics_dist))
         # Format {player: %} how does this interact with the roster???  Seems to be two issues at play
         self._pos_rota = {Position.QB: self.set_rota(rota["QB"]), Position.RB: self.set_rota(rota["RB"]),
                           Position.C: self.set_rota(rota["C"]), Position.CB: self.set_rota(rota["CB"]),
@@ -47,8 +51,25 @@ class MatchTeam(BaseTeam):
                           Position.DIME: self.set_rota(rota["DIME"]), Position.SLOT: self.set_rota(rota["SLOT"])}
         print(self._pos_rota)
         self._state = TeamState()
-        self._tactics = tactics
         # TODO: Something to do with tactics, how does the decision making process
+
+    def tactics_dist(self):
+        base = {TotalStyle.RUN: 0, TotalStyle.MEDIUM_PASS: 0, TotalStyle.SHORT_PASS: 0, TotalStyle.LONG_PASS: 0,
+                TotalStyle.SPECIAL: 0}
+        for i in self._tactics["offense"][1]:
+            base[OFF_PLAY_LIST[i].total_style] += self._tactics["offense"][1][i]
+        for i in self._tactics["offense"][2]:
+            base[OFF_PLAY_LIST[i].total_style] += self._tactics["offense"][1][i]
+        for i in self._tactics["offense"][3]:
+            base[OFF_PLAY_LIST[i].total_style] += self._tactics["offense"][1][i]
+        base = {a: base[a] * 100 / max(0, (base[TotalStyle.MEDIUM_PASS] + base[TotalStyle.SHORT_PASS] +
+                                           base[TotalStyle.LONG_PASS] + base[TotalStyle.RUN])) for a in base}
+        diff = {a: abs(base[a] - self.base_value[a]) for a in self.base_value}
+        diff = {a: pow(diff[a], 2.5) / 3500 for a in diff}
+        print("base")
+        print(base)
+        print(1 - min(sum(diff.values()) / 100, 0.5))
+        return 1 - min(sum(diff.values()) / 100, 0.5)
 
     @staticmethod
     def set_rota(rota):

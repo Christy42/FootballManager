@@ -1,4 +1,4 @@
-from enums import OffenseFormation, PlayStyle, Side, RunStyle, GenOff
+from enums import OffenseFormation, PlayStyle, Side, RunStyle, GenOff, TotalStyle
 from plays.offense_formation import SPREAD, SINGLEBACK, SHOTGUN, DOUBLE_TE_SET, I_FORM, KICK_OFF
 from plays.route import *
 
@@ -9,10 +9,11 @@ from plays.route import *
 
 
 class OffensePlay:
-    def __init__(self, formation, style, assignments: RouteCombo, direction, runner, name, com_name):
+    def __init__(self, formation, style, assignments: RouteCombo, direction, runner, name, com_name, total_style):
         self._direction = direction
         self._assignments = assignments
         self._formation = formation
+        self.total_style = total_style
         self._name = name
         self._commentary_name = com_name
         self._runner = runner
@@ -54,13 +55,14 @@ class OffensePlay:
 
 
 OFF_PLAY_LIST = {"ManCenterRun": OffensePlay(SINGLEBACK, PlayStyle.RUN, CENTER_RUN, Side.CENTER, GenOff.REC5,
-                                             "Man Center Run", "Man Center Run"),
+                                             "Man Center Run", "Man Center Run", TotalStyle.RUN),
                  "DriveSingleback": OffensePlay(SINGLEBACK, PlayStyle.PASS, DRIVE_SINGLEBACK, Side.CENTER, GenOff.REC5,
-                                                "Singleback Drive", "Singleback Drive"),
+                                                "Singleback Drive", "Singleback Drive", TotalStyle.SHORT_PASS),
                  "KickOff": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
-                                        KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Kick Off", "Kick Off"),
+                                        KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Kick Off", "Kick Off",
+                                        TotalStyle.SPECIAL),
                  "Kick": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
-                                     KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Kick", "Kick"),
+                                     KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Kick", "Kick", TotalStyle.SPECIAL),
                  "Punt": OffensePlay(KICK_OFF, PlayStyle.SPECIAL,
-                                     KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Punt", "Punt")
+                                     KICK_ASSIGN, Side.CENTER, GenOff.REC4, "Punt", "Punt", TotalStyle.SPECIAL)
                  }
